@@ -18,34 +18,21 @@
 
     <v-app-bar app dark color="green">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>CONTACT</v-toolbar-title>
+      <v-toolbar-title to="/">CONTACT</v-toolbar-title>
 
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-md-and-down">
-        <v-btn text color="">Signup</v-btn>
-        <v-btn text>Login</v-btn>
+        <v-btn text color="" to="/">Home</v-btn>
+        <v-btn text color="" to="/user/signup">Signup</v-btn>
+        <v-btn text to="/user/login">Login</v-btn>
 
         <!-- if logged in user -->
-        <v-btn text>Logout</v-btn>
+        <v-btn text to="/user/logout">Logout</v-btn>
       </v-toolbar-items>
 
       <!-- mobile -->
       <v-menu class="hidden-md-and-up">
-        <!-- <v-toolbar-side-icon slot="activator"></v-toolbar-side-icon>
-        <v-icon>home</v-icon>
-
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-content>
-              <p>Content</p>
-            </v-list-tile-content>
-            <v-list-tile-action>
-              <v-btn icon ripple>
-                <v-icon color="grey lighten-1">info</v-icon>
-              </v-btn>
-            </v-list-tile-action>
-          </v-list-tile>
-        </v-list> -->
+        <!-- make the button for mobile work -->
 
         <v-btn>button</v-btn>
       </v-menu>
