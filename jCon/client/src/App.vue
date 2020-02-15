@@ -2,7 +2,15 @@
   <v-app>
     <v-navigation-drawer app dark v-model="drawer">
       <v-list dense nav class="py-0">
-        <v-list-item two-line>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="title">
+              Information
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item link to="/user/editProfile">
           <v-list-item-avatar>
             <img src="https://randomuser.me/api/portraits/men/81.jpg" />
           </v-list-item-avatar>
@@ -11,6 +19,10 @@
             <v-list-item-title>Java</v-list-item-title>
             <v-list-item-subtitle>0949632242</v-list-item-subtitle>
           </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item link to="/user/editProfile">
+          <v-list-item-title>Edir Profile</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -25,6 +37,11 @@
         <v-btn text color="" to="/">Home</v-btn>
         <v-btn text color="" to="/user/signup">Signup</v-btn>
         <v-btn text to="/user/login">Login</v-btn>
+
+        <v-btn text to="/user/contacts">Contact List</v-btn>
+        <v-btn text to="/user/contacts/12">Contact Detail</v-btn>
+        <!-- <v-btn text to="/user/login">Login</v-btn>
+				<v-btn text to="/user/login">Login</v-btn> -->
 
         <!-- if logged in user -->
         <v-btn text to="/user/logout">Logout</v-btn>

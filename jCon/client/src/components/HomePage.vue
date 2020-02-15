@@ -1,5 +1,7 @@
 <template>
-  <h1>Home page</h1>
+  <v-container>
+    <h1 class="text-center">The Project</h1>
+  </v-container>
 </template>
 <script>
 export default {

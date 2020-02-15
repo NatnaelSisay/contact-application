@@ -7,6 +7,7 @@ import LogOut from "@/components/users/LogOut.vue";
 import UserDetail from "@/components/users/UserDetail.vue";
 import ContactList from "@/components/users/ContactList.vue";
 import ContactDetail from "@/components/users/ContactDetail.vue";
+import AddContact from "@/components/users/AddContact.vue";
 
 const routes = [
   {
@@ -26,12 +27,16 @@ const routes = [
         component: LogOut
       },
       {
-        path: "detail",
+        path: "editProfile",
         component: UserDetail
       },
       {
         path: "contacts",
         component: ContactList
+      },
+      {
+        path: "contacts/add",
+        component: AddContact
       },
       {
         path: "contacts/:phone_number",
