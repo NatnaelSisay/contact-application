@@ -2,6 +2,16 @@
   <v-container>
     <v-card class="mx-auto" raised max-width="700" loading="true">
       <!-- add errors showing up here -->
+      <div v-if="errors">
+        <v-alert type="error" v-for="error in errors" :key="error.id">
+          {{ error }}
+        </v-alert>
+      </div>
+      <div v-if="success">
+        <v-alert type="success">
+          {{ success }}
+        </v-alert>
+      </div>
       <v-card-title>
         Signup
       </v-card-title>
@@ -68,7 +78,8 @@ export default {
         confirm: null,
         photo: null
       },
-      errors: []
+      errors: [],
+      success: "Successfully Signed up"
     };
   },
   methods: {
