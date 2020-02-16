@@ -14,6 +14,10 @@
       "type": "string",
       "required": true
     },
+    "owner": {
+      "type": "string",
+      "required": true
+    },
     "photo": {
       "type": "any"
     }
