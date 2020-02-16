@@ -6,11 +6,18 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form action="#">
+        <v-form action="#" @submit.prevent="login">
           <v-row>
             <v-col cols="12">
-              <v-text-field label="Phone Number" outlined> </v-text-field>
-              <v-text-field label="Password" outlined> </v-text-field>
+              <v-text-field label="Phone Number" v-model="user.name" outlined>
+              </v-text-field>
+              <v-text-field
+                label="Password"
+                type="password"
+                v-model="user.password"
+                outlined
+              >
+              </v-text-field>
 
               <v-btn x-large type="submit" color="success" value="Sign up"
                 >Login</v-btn
@@ -24,6 +31,19 @@
 </template>
 <script>
 export default {
-  name: "login"
+  name: "login",
+  data() {
+    return {
+      user: {
+        name: null,
+        password: null
+      }
+    };
+  },
+  methods: {
+    login() {
+      window.alert("Login " + this.user.name + " - " + this.user.password);
+    }
+  }
 };
 </script>

@@ -12,7 +12,7 @@
           v-for="contact in contacts"
           :key="contact.id"
           three-line=""
-          to="/user/contacts/23"
+          :to="`/user/contacts/${contact.phone_number}`"
         >
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/81.jpg"></v-img>
@@ -39,44 +39,47 @@ export default {
   name: "contactList",
   data() {
     return {
-      contacts: [
-        {
-          id: 1,
-          name: "Ermias Amelga",
-          phone_number: "0943445533",
-          picture: "Photo"
-        },
-        {
-          id: 2,
-          name: "Ermias Amelga",
-          phone_number: "0943445533",
-          picture: "Photo"
-        },
-        {
-          id: 3,
-          name: "Ermias Amelga",
-          phone_number: "0943445533",
-          picture: "Photo"
-        },
-        {
-          id: 4,
-          name: "Ermias Amelga",
-          phone_number: "0943445533",
-          picture: "Photo"
-        },
-        {
-          id: 5,
-          name: "Ermias Amelga",
-          phone_number: "0943445533",
-          picture: "Photo"
-        }
-      ]
+      contacts: null
     };
   },
   methods: {
     // add() {
     //   this.$router.push("/user/contacts/add");
     // }
+  },
+  created() {
+    this.contacts = [
+      {
+        id: 1,
+        name: "Ermias Amelga",
+        phone_number: "0943445533",
+        picture: "Photo"
+      },
+      {
+        id: 2,
+        name: "Ermias Amelga",
+        phone_number: "0943445533",
+        picture: "Photo"
+      },
+      {
+        id: 3,
+        name: "Ermias Amelga",
+        phone_number: "0943445533",
+        picture: "Photo"
+      },
+      {
+        id: 4,
+        name: "Ermias Amelga",
+        phone_number: "0943445533",
+        picture: "Photo"
+      },
+      {
+        id: 5,
+        name: "Ermias Amelga",
+        phone_number: "0943445533",
+        picture: "Photo"
+      }
+    ];
   }
 };
 </script>
