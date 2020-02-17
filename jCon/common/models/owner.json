@@ -1,0 +1,28 @@
+{
+  "name": "Owner",
+  "base": "User",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "phone_number": {
+      "type": "string",
+      "required": true
+    },
+    "photo": {
+      "type": "any"
+    },
+    "password": {
+      "type": "string"
+    }
+  },
+  "validations": ["phone_number", "password"],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
