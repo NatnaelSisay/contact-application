@@ -5,6 +5,7 @@
         <template>
           <v-subheader> Your Contact's </v-subheader>
         </template>
+
         <v-divider></v-divider>
 
         <v-list-item
@@ -18,6 +19,7 @@
             <v-img src="https://randomuser.me/api/portraits/men/81.jpg"></v-img>
             <!-- {{ contact.picture }} -->
           </v-list-item-avatar>
+          <!-- end of avatar -->
 
           <v-list-item-content>
             <v-list-item-title>{{ contact.name }}</v-list-item-title>
@@ -25,8 +27,11 @@
               contact.phone_number
             }}</v-list-item-subtitle>
           </v-list-item-content>
+          <!-- end of v-list-item-content -->
         </v-list-item>
+        <!-- end of v-list-item -->
       </v-list>
+      <!-- end of v-list -->
     </v-card>
 
     <v-btn class="mx-2" fab dark color="indigo" to="/user/contacts/add">

@@ -1,9 +1,10 @@
 <template>
   <v-app>
-    <v-container>
+    <v-container class="text-center">
       <h1 class="text-center">
-        How did you get here ? This is not safe zone get back
+        404: Page Not Found
       </h1>
+      <a href="/">To Home Page</a>
     </v-container>
   </v-app>
 </template>

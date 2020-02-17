@@ -3,21 +3,23 @@
     <v-img class="white--text align-end" height="200px" :src="contact.photo">
       <v-card-title>{{ contact.name }}</v-card-title>
     </v-img>
+    <!-- end of v-img -->
 
     <v-card-subtitle class="pb-0">Additional Informations</v-card-subtitle>
 
     <v-card-text class="text--primary">
       <div>Phone Number : {{ contact.phoneNumber }}</div>
-
-      <!-- <div></div> -->
     </v-card-text>
+    <!-- end of v-card-text -->
 
     <v-card-actions>
       <v-btn color="orange" text>
         Edit
       </v-btn>
     </v-card-actions>
+    <!-- end of v-card-actions -->
   </v-card>
+  <!-- end of v-card -->
 </template>
 
 <script>
