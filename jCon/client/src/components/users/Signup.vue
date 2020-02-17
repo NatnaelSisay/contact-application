@@ -2,6 +2,15 @@
   <v-container>
     <v-card class="mx-auto" raised max-width="500" loading="true">
       <!-- add errors showing up here -->
+      <div v-if="errors">
+        <v-list>
+          <v-list-item v-for="error in errors" :key="error.id">
+            <v-alert>
+              {{ error }}
+            </v-alert>
+          </v-list-item>
+        </v-list>
+      </div>
       <v-card-title>
         Signup
       </v-card-title>
@@ -38,20 +47,33 @@
                 </v-layout>
                 <!-- end of v-layout, profile -->
 
+                <ValidationProvider rules="required|email" v-slot="{ errors }">
+                  <v-text-field
+                    label="Your Email "
+                    type="eamil"
+                    v-model="user.email"
+                    outlined
+                    :error-messages="errors"
+                  >
+                  </v-text-field>
+                  <!-- end of v-text-field for email -->
+                </ValidationProvider>
+                <!-- end of validation for Your email -->
+
                 <ValidationProvider
-                  rules="required|minStringLength|alpha"
+                  rules="required|minStringLength"
                   v-slot="{ errors }"
                 >
                   <v-text-field
-                    label="Your Name"
+                    label="Your Name "
                     v-model="user.name"
                     outlined
                     :error-messages="errors"
                   >
                   </v-text-field>
-                  <!-- end of v-text-field for name -->
+                  <!-- end of v-text-field for email -->
                 </ValidationProvider>
-                <!-- end of validation for Your name -->
+                <!-- end of validation for Your email -->
 
                 <ValidationProvider
                   rules="required|ValidPhoneNumber"
@@ -145,8 +167,9 @@
   </v-container>
 </template>
 <script>
-import { required, alpha } from "vee-validate/dist/rules";
-//  email, max
+// *********** FORM VALIDATION **********
+
+import { required, email } from "vee-validate/dist/rules";
 import {
   extend,
   setInteractionMode,
@@ -166,9 +189,9 @@ extend("required", {
   ...required,
   message: "* Required"
 });
-extend("alpha", {
-  ...alpha,
-  message: "* No number is allowed"
+extend("email", {
+  ...email,
+  message: "* Email is not Valid"
 });
 extend("ValidPhoneNumber", value => {
   const tenCharacter = value.length == 10;
@@ -193,6 +216,9 @@ extend("confirm", {
   message: "Password confirmation does not match"
 });
 
+// ******* end of form validation extends ********
+
+import axios from "axios";
 export default {
   name: "signup",
   components: {
@@ -203,12 +229,13 @@ export default {
     return {
       user: {
         name: null,
+        email: null,
         phone_number: null,
         password: null,
         confirm: null,
         photo: null
       },
-      errors: [],
+      errors: ["check"],
       avatar: "@/assets/logo.svg"
     };
   },
@@ -222,8 +249,30 @@ export default {
       value
         .then(resolve => {
           // here we will send the request to the server
-          console.log(resolve);
-          console.log(this.$refs.fileInput);
+          console.log(" form Validated : " + resolve);
+          // console.log(this.$refs.fileInput);
+          if (resolve) {
+            axios
+              .post(
+                "http://localhost:3000/api/Owners?access_token=6P83hmU8401vn9IVmAhxLfLObGuOvLxLHMPCkv6c0vo4q1H0U1G9dRlpsaG4T8U4",
+                this.user
+              )
+              .then(resolve => {
+                console.log(resolve.status);
+                if (resolve.status == 200) {
+                  setTimeout(() => {
+                    window.alert("Welcome");
+                    this.$router.push("/login");
+                  }, 2000);
+                } else {
+                  // this.$router.push("/signup");
+                }
+              })
+              .catch(() => {
+                this.errors.push("User Email Already Exist");
+                // console.log(error);
+              });
+          }
         })
         .catch(err => {
           // form validation failed
