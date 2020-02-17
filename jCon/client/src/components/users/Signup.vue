@@ -3,13 +3,9 @@
     <v-card class="mx-auto" raised max-width="500" loading="true">
       <!-- add errors showing up here -->
       <div v-if="errors">
-        <v-list>
-          <v-list-item v-for="error in errors" :key="error.id">
-            <v-alert>
-              {{ error }}
-            </v-alert>
-          </v-list-item>
-        </v-list>
+        <v-alert type="error" v-for="error in errors" :key="error.id">
+          {{ error }}
+        </v-alert>
       </div>
       <v-card-title>
         Signup
@@ -21,8 +17,8 @@
             <v-row>
               <v-col cols="12">
                 <!-- upload a picture -->
-                <v-layout align-center justify-center class="mb-2">
-                  <v-flex xs12 sm8 md4>
+                <v-layout class="d-flex justify-center mb-2">
+                  <v-flex class="d-flex justify-center">
                     <div>
                       <input
                         type="file"
@@ -235,7 +231,7 @@ export default {
         confirm: null,
         photo: null
       },
-      errors: ["check"],
+      errors: [],
       avatar: "@/assets/logo.svg"
     };
   },

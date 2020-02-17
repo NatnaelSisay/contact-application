@@ -7,6 +7,8 @@
 export default {
   name: "logout",
   created() {
+    localStorage.removeItem("access_token");
+    this.$router.push("/");
     // destroy the token and redirect to home page
   }
 };

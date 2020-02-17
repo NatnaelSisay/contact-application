@@ -9,7 +9,12 @@
         <v-form action="#" @submit.prevent="login">
           <v-row>
             <v-col cols="12">
-              <v-text-field label="Phone Number" v-model="user.name" outlined>
+              <v-text-field
+                label="Email "
+                type="email"
+                v-model="user.email"
+                outlined
+              >
               </v-text-field>
               <!-- end of v-text-field for phone number -->
               <v-text-field
@@ -37,19 +42,30 @@
   </v-container>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "login",
   data() {
     return {
       user: {
-        name: null,
+        email: null,
         password: null
       }
     };
   },
   methods: {
     login() {
-      window.alert("Login " + this.user.name + " - " + this.user.password);
+      // window.alert("Login " + this.user.name + " - " + this.user.password);
+      axios
+        .post("http://localhost:3000/api/Owners/login", this.user)
+        .then(resolve => {
+          console.log(resolve.data.id);
+          localStorage.setItem("access_token", resolve.data.id);
+          this.$router.push("/user/contacts");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };
