@@ -17,6 +17,7 @@
                 outlined
               >
               </v-text-field>
+              <!-- end of v-text-field for phone number -->
 
               <v-file-input
                 label="Upload Picture (optional)"
@@ -24,15 +25,21 @@
                 hint="(Optional)"
               >
               </v-file-input>
+              <!-- end of v-file-input photo -->
 
               <v-btn x-large type="submit" color="success" value="Sign up"
                 >Save</v-btn
               >
             </v-col>
+            <!-- end of v-col -->
           </v-row>
+          <!-- end of v-row -->
         </v-form>
+        <!-- end of v-form -->
       </v-card-text>
+      <!-- end of v-card-text -->
     </v-card>
+    <!-- end of v-card -->
   </v-container>
 </template>
 <script>

@@ -1,12 +1,14 @@
 import Vue from "vue";
 import App from "./App.vue";
+
 import vuetify from "./plugins/vuetify";
 import router from "@/router/index";
+import VeeValidate from "vee-validate";
 
 Vue.use(router);
-// import "vuetify/dist/vuetify.min.css";
 Vue.use(vuetify);
-// Vue.use(Vuetify);
+Vue.use(VeeValidate);
+
 Vue.config.productionTip = false;
 
 new Vue({
