@@ -34,7 +34,16 @@
       <!-- end of v-list -->
     </v-card>
 
-    <v-btn class="mx-2" fab dark color="indigo" to="/user/contacts/add">
+    <v-btn
+      class="mx-2"
+      fab
+      fixed
+      bottom
+      right
+      dark
+      color="indigo"
+      to="/user/contacts/add"
+    >
       <v-icon dark>mdi-plus</v-icon>
     </v-btn>
   </v-container>

@@ -249,10 +249,7 @@ export default {
           // console.log(this.$refs.fileInput);
           if (resolve) {
             axios
-              .post(
-                "http://localhost:3000/api/Owners?access_token=6P83hmU8401vn9IVmAhxLfLObGuOvLxLHMPCkv6c0vo4q1H0U1G9dRlpsaG4T8U4",
-                this.user
-              )
+              .post("http://localhost:3000/api/Owners", this.user)
               .then(resolve => {
                 console.log(resolve.status);
                 if (resolve.status == 200) {

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-navigation-drawer app dark v-model="drawer">
-      <v-list dense nav class="py-0" v-if="isLoggedIn">
+      <v-list dense nav class="py-0" v-if="loggedIn">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
@@ -47,7 +47,7 @@
       <v-toolbar-title to="/">CONTACT</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-md-and-down" v-if="isLoggedIn">
+      <v-toolbar-items class="hidden-md-and-down" v-if="loggedIn">
         <v-btn text color="" to="/">Home</v-btn>
         <v-btn text to="/user/contacts">Contact List</v-btn>
         <v-btn text to="/logout" @click="log">Logout</v-btn>
@@ -76,11 +76,10 @@
 
 <script>
 export default {
-  name: "navigatoin",
+  name: "navigation-panel",
   data() {
     return {
       drawer: false, // Hide mobile side menu by default
-
       user: {}
     };
   },
@@ -93,8 +92,8 @@ export default {
     };
   },
   computed: {
-    isLoggedIn() {
-      return localStorage.getItem("access_token") != null;
+    loggedIn: function() {
+      return localStorage.getItem("access_token");
     }
   },
   methods: {

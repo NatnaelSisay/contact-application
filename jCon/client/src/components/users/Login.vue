@@ -57,10 +57,11 @@ export default {
     login() {
       // window.alert("Login " + this.user.name + " - " + this.user.password);
       axios
-        .post("http://localhost:3000/api/Owners/login", this.user)
+        .post("http://localhost:3000/api/Owners/login?include=User", this.user)
         .then(resolve => {
           console.log(resolve.data.id);
           localStorage.setItem("access_token", resolve.data.id);
+          localStorage.setItem("user_name", resolve.data.user.name);
           this.$router.push("/user/contacts");
         })
         .catch(err => {
