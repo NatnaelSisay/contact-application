@@ -231,6 +231,7 @@ export default {
         confirm: null,
         photo: null
       },
+      image: null,
       errors: [],
       avatar: "@/assets/logo.svg"
     };
@@ -254,9 +255,31 @@ export default {
                 console.log(resolve.status);
                 if (resolve.status == 200) {
                   setTimeout(() => {
+                    // here i will add the photo, since the user is created.
+                    // the user selected image to upload
+                    if (this.image) {
+                      const userImage = new FormData();
+                      userImage.append("profile", this.image, this.image.name);
+                      console.log(
+                        "Image file name inside the request : -> " +
+                          this.image.name
+                      );
+                      axios
+                        .post(
+                          "http://localhost:3000/api/masters/profiles/upload",
+                          userImage
+                        )
+                        .then(resolve => {
+                          console.log("image saved", resolve);
+                          this.$router.push("/login");
+                        })
+                        .catch(err => {
+                          console.log("No Nigger we are fucked up " + err);
+                        });
+                    }
+
                     window.alert("Welcome");
-                    this.$router.push("/login");
-                  }, 2000);
+                  }, 1000);
                 } else {
                   // this.$router.push("/signup");
                 }
@@ -278,9 +301,13 @@ export default {
     },
     avatarSelected(event) {
       // FIX ISSUE
+      console.log(this.image);
+      this.image = event.target.files[0];
       const selectedFile = event.target.files[0];
       this.avatar = URL.createObjectURL(selectedFile);
       console.log(selectedFile);
+
+      console.log("Name of the File " + this.image.name);
     }
   }
 };

@@ -42,5 +42,9 @@
   "Owner": {
     "dataSource": "db",
     "public": true
+  },
+  "master": {
+    "dataSource": "profiles",
+    "public": true
   }
 }
