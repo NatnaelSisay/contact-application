@@ -1,6 +1,6 @@
 {
-  "name": "contact",
-  "base": "PersistedModel",
+  "name": "Owner",
+  "base": "User",
   "idInjection": true,
   "options": {
     "validateUpsert": true
@@ -14,23 +14,16 @@
       "type": "string",
       "required": true
     },
-    "owner": {
-      "type": "string",
-      "required": true
-    },
     "photo": {
       "type": "any"
+    },
+    "password": {
+      "type": "string"
     }
   },
   "validations": [],
   "relations": {},
   "acls": [
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "$unauthenticated",
-      "permission": "DENY"
-    },
     {
       "accessType": "*",
       "principalType": "ROLE",
@@ -40,13 +33,7 @@
     {
       "accessType": "*",
       "principalType": "ROLE",
-      "principalId": "$unauthenticated",
-      "permission": "ALLOW"
-    },
-    {
-      "accessType": "*",
-      "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$everyone",
       "permission": "ALLOW"
     }
   ],

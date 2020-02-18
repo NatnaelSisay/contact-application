@@ -38,5 +38,9 @@
   "contact": {
     "dataSource": "db",
     "public": true
+  },
+  "Owner": {
+    "dataSource": "db",
+    "public": true
   }
 }

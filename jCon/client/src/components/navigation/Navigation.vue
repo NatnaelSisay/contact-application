@@ -76,11 +76,10 @@
 
 <script>
 export default {
-  name: "navigatoin",
+  name: "navigation-panel",
   data() {
     return {
       drawer: false, // Hide mobile side menu by default
-      loggedIn: false,
       user: {}
     };
   },
@@ -93,14 +92,12 @@ export default {
     };
   },
   computed: {
-    isLoggedIn() {
-      return true;
+    loggedIn: function() {
+      return localStorage.getItem("access_token");
     }
   },
   methods: {
-    log() {
-      this.loggedIn = !this.loggedIn;
-    }
+    log() {}
   }
 };
 </script>
