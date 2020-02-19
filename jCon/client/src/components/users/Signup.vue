@@ -214,7 +214,7 @@ extend("confirm", {
 
 // ******* end of form validation extends ********
 
-import axios from "axios";
+// import axios from "axios";
 export default {
   name: "signup",
   components: {
@@ -245,30 +245,40 @@ export default {
       value
         .then(resolve => {
           // here we will send the request to the server
-          console.log(" form Validated : " + resolve);
+          // console.log(" form Validated : " + resolve);
           // console.log(this.$refs.fileInput);
+
           if (resolve) {
-            axios
-              .post("http://localhost:3000/api/Owners", this.user)
-              .then(resolve => {
-                console.log(resolve.status);
-                if (resolve.status == 200) {
-                  setTimeout(() => {
-                    window.alert("Welcome");
-                    this.$router.push("/login");
-                  }, 2000);
-                } else {
-                  // this.$router.push("/signup");
-                }
+            // dispatch reigster user
+            const theUser = {
+              name: this.user.name,
+              phone_number: this.user.phone_number,
+              photo: "no photo",
+              realm: "novalue",
+              username: this.user.name,
+              email: this.user.email,
+              emailVerified: true,
+              password: this.user.password
+            };
+
+            this.$store
+              .dispatch("register", {
+                user: theUser,
+                image: this.user.photo
               })
-              .catch(() => {
-                this.errors.push("User Email Already Exist");
-                // console.log(error);
+              .then(() => {
+                this.$router.push("/login");
+              })
+              .catch(error => {
+                // SIGNUP FAILED
+                console.log(error);
               });
+          } else {
+            console.log("Form validation falied");
           }
         })
         .catch(err => {
-          // form validation failed
+          // FORM VALIDATION FAILED
           console.log(err);
         });
     },
@@ -280,6 +290,7 @@ export default {
       // FIX ISSUE
       const selectedFile = event.target.files[0];
       this.avatar = URL.createObjectURL(selectedFile);
+      this.photo = selectedFile;
       console.log(selectedFile);
     }
   }

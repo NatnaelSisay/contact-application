@@ -12,6 +12,7 @@ import LogOut from "@/components/users/LogOut.vue";
 
 // routes
 import user_routes from "./users/index";
+import store from "../store";
 Vue.use(Router);
 
 const allroutes = [
@@ -38,7 +39,24 @@ const allroutes = [
   }
 ];
 const routes = allroutes.concat(user_routes);
-export default new Router({
+const router = new Router({
   mode: "history",
   routes
 });
+
+// ********** AUTHENTICATION *********
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.isLoggedIn) {
+      next();
+      return;
+    }
+    next("/login");
+  } else {
+    next();
+  }
+});
+
+// ********************************
+
+export default router;

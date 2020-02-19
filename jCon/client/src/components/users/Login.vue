@@ -10,10 +10,10 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                label="Email "
+                label="Email"
                 type="email"
-                v-model="user.email"
                 outlined
+                v-model="user.email"
               >
               </v-text-field>
               <!-- end of v-text-field for phone number -->
@@ -42,7 +42,6 @@
   </v-container>
 </template>
 <script>
-import axios from "axios";
 export default {
   name: "login",
   data() {
@@ -55,17 +54,15 @@ export default {
   },
   methods: {
     login() {
-      // window.alert("Login " + this.user.name + " - " + this.user.password);
-      axios
-        .post("http://localhost:3000/api/Owners/login?include=User", this.user)
-        .then(resolve => {
-          console.log(resolve.data.id);
-          localStorage.setItem("access_token", resolve.data.id);
-          localStorage.setItem("user_name", resolve.data.user.name);
-          this.$router.push("/user/contacts");
+      window.alert("Login " + this.user.email + " - " + this.user.password);
+      this.$store
+        .dispatch("login", this.user)
+        .then(() => {
+          this.$router.push("/");
         })
-        .catch(err => {
-          console.log(err);
+        .catch(error => {
+          // LOGIN filed
+          console.log(error);
         });
     }
   }

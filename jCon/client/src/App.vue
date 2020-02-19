@@ -17,6 +17,16 @@ export default {
   name: "App",
   components: {
     Navigation
+  },
+  created: function() {
+    this.$http.interceptors.response.use(undefined, error => {
+      return new Promise(() => {
+        if (error.status == 401 && error.config) {
+          this.$store.dispatch("logout");
+        }
+        throw error;
+      });
+    });
   }
 };
 </script>

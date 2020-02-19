@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-navigation-drawer app dark v-model="drawer">
-      <v-list dense nav class="py-0" v-if="loggedIn">
+      <v-list dense nav class="py-0" v-if="isLoggedIn">
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title class="title">
@@ -47,17 +47,17 @@
       <v-toolbar-title to="/">CONTACT</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-md-and-down" v-if="loggedIn">
+      <v-toolbar-items class="hidden-md-and-down" v-if="isLoggedIn">
         <v-btn text color="" to="/">Home</v-btn>
         <v-btn text to="/user/contacts">Contact List</v-btn>
-        <v-btn text to="/logout" @click="log">Logout</v-btn>
+        <v-btn text @click="logout">Logout</v-btn>
       </v-toolbar-items>
       <!-- end of v-toolbar-items -->
 
       <v-toolbar-items class="hidden-md-and-down" v-else>
         <v-btn text color="" to="/">Home</v-btn>
         <v-btn text color="" to="/signup">Signup</v-btn>
-        <v-btn text to="/login" @click="log">Login</v-btn>
+        <v-btn text to="/login">Login</v-btn>
       </v-toolbar-items>
       <!-- end of v-toolbat-items -->
 
@@ -92,12 +92,22 @@ export default {
     };
   },
   computed: {
-    loggedIn: function() {
-      return localStorage.getItem("access_token");
+    isLoggedIn: function() {
+      return this.$store.getters.isLoggedIn;
     }
   },
   methods: {
-    log() {}
+    logout() {
+      this.$store
+        .dispatch("logout")
+        .then(() => {
+          this.$router.push("/login");
+        })
+        .catch(error => {
+          console.log("[ ERROR ] logout, token may be expired");
+          console.log(error);
+        });
+    }
   }
 };
 </script>
