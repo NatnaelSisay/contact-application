@@ -69,10 +69,18 @@ const actions = {
   },
   logout(context) {
     return new Promise(resolve => {
-      context.commit("LOGOUT");
-      localStorage.removeItem("access_token");
-      delete axios.defaults.headers.common["Authentication"];
-      resolve();
+      axios
+        .post("http://localhost:3000/api/Owners/logout")
+        .then(result => {
+          console.log("loged out");
+          context.commit("LOGOUT");
+          localStorage.removeItem("access_token");
+          delete axios.defaults.headers.common["Authentication"];
+          resolve(result);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     });
   }
 };
