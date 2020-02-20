@@ -13,7 +13,7 @@
 
       <v-card-text>
         <ValidationObserver ref="observer" v-slot="{}">
-          <v-form action="#" @submit.prevent="signup">
+          <v-form action="#" @submit.prevent="register">
             <v-row>
               <v-col cols="12">
                 <!-- upload a picture -->
@@ -270,8 +270,8 @@ export default {
                           userImage
                         )
                         .then(resolve => {
+                          // this.$router.push("/login");
                           console.log("image saved", resolve);
-                          this.$router.push("/login");
                         })
                         .catch(err => {
                           console.log("No Nigger we are fucked up " + err);
@@ -294,6 +294,42 @@ export default {
           // form validation failed
           console.log(err);
         });
+    },
+    register() {
+      const value = this.$refs.observer.validate();
+      value.then(() => {
+        if (this.image) {
+          const userImage = new FormData();
+          userImage.append("profile", this.image, this.image.name);
+          console.log(
+            "Image file name inside the request : -> " + this.image.name
+          );
+          axios
+            .post(
+              "http://localhost:3000/api/masters/profiles/upload",
+              userImage
+            )
+            .then(resolve => {
+              console.log("resolve ", resolve);
+              const image = resolve.data.result.files.profile;
+              this.user.photo = image;
+              axios
+                .post("http://localhost:3000/api/Owners", this.user)
+                .then(result => {
+                  console.log("REGISTRATION WAS SUCCESSFULL");
+                  console.log(result);
+                })
+                .catch(error => {
+                  console.log(error);
+
+                  console.log("User already exist");
+                });
+            })
+            .catch(err => {
+              console.log("No Nigger we are fucked up " + err);
+            });
+        }
+      });
     },
     reset() {
       this.user.phone_number = this.user.name = this.user.password = this.user.confirm = this.user.photo = null;
