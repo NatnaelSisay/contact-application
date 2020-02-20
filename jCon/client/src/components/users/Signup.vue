@@ -267,6 +267,7 @@ export default {
                 image: this.user.photo
               })
               .then(() => {
+                // console.log("redirect to loginpage");
                 this.$router.push("/login");
               })
               .catch(error => {

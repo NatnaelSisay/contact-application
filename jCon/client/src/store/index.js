@@ -45,7 +45,7 @@ const actions = {
     });
   },
   register(context, paylaod) {
-    return new Promise(() => {
+    return new Promise((res, rej) => {
       if (paylaod.image) {
         const userImage = new FormData();
         userImage.append("profile", paylaod.image, paylaod.image.name);
@@ -63,11 +63,13 @@ const actions = {
               .then(result => {
                 console.log("REGISTRATION WAS SUCCESSFULL");
                 console.log(result);
+                res();
               })
               .catch(error => {
                 console.log(error);
 
                 console.log("User already exist");
+                rej();
               });
           })
           .catch(err => {
