@@ -29,7 +29,7 @@ const mutations = {
 };
 
 const actions = {
-  register(context, payload) {
+  registerd(context, payload) {
     // USER NEED TO LOGIN AFTER REGISTRATION
     return new Promise(resolve => {
       axios
@@ -42,6 +42,38 @@ const actions = {
         .catch(error => {
           console.log(error);
         });
+    });
+  },
+  register(context, paylaod) {
+    return new Promise(() => {
+      if (paylaod.image) {
+        const userImage = new FormData();
+        userImage.append("profile", paylaod.image, paylaod.image.name);
+        console.log(
+          "Image file name inside the request : -> " + paylaod.image.name
+        );
+        axios
+          .post("http://localhost:3000/api/masters/profiles/upload", userImage)
+          .then(resolve => {
+            console.log("resolve ", resolve);
+            const image = resolve.data.result.files.profile;
+            this.user.photo = image;
+            axios
+              .post("http://localhost:3000/api/Owners", this.user)
+              .then(result => {
+                console.log("REGISTRATION WAS SUCCESSFULL");
+                console.log(result);
+              })
+              .catch(error => {
+                console.log(error);
+
+                console.log("User already exist");
+              });
+          })
+          .catch(err => {
+            console.log("No Nigger we are fucked up " + err);
+          });
+      }
     });
   },
   login(context, payload) {
