@@ -10,8 +10,45 @@
     <v-card-text class="text--info" color="red--text">
       <div>Phone Number : {{ contact.phone_number }}</div>
     </v-card-text>
+    <v-card class="mx-auto" raised max-width="700" outlined>
+      <v-card-title>
+        {{ contact.name }}
+      </v-card-title>
 
-    {{ the_phone }}
+      <v-card-text>
+        <v-form action="#" @submit.prevent="save">
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                label="Name"
+                type="email"
+                outlined
+                v-model="contact.name"
+              >
+              </v-text-field>
+              <!-- end of v-text-field for phone number -->
+              <v-text-field
+                label="Phone"
+                type="text"
+                v-model="contact.phone_number"
+                outlined
+              >
+              </v-text-field>
+              <!-- end of v-text-field for password -->
+
+              <v-btn x-large type="submit" color="success" value="Sign up"
+                >Login</v-btn
+              >
+            </v-col>
+            <!-- end of v-col -->
+          </v-row>
+          <!-- end of v-row -->
+        </v-form>
+        <!-- end of v-form -->
+      </v-card-text>
+      <!-- end of v-card-text -->
+    </v-card>
+
     <!-- end of v-card-text -->
 
     <v-card-actions>
@@ -46,12 +83,9 @@ export default {
         this.contact = this.$store.getters.getDetail;
       });
   },
-  computed: {
-    the_phone: function() {
-      // this.phone =
-      return this.$router.history.current.params.phone_number;
-      // return "this.$router.params.phone_number";
-    }
-  }
+  methods: {
+    save() {}
+  },
+  computed: {}
 };
 </script>
