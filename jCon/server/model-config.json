@@ -42,5 +42,9 @@
   "Owner": {
     "dataSource": "db",
     "public": true
+  },
+  "ContactPictures": {
+    "dataSource": "Pictures",
+    "public": true
   }
 }

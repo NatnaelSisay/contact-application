@@ -64,7 +64,10 @@ const actions = {
         //   "Image file name inside the request : -> " + payload.image.name
         // );
         axios
-          .post("http://localhost:3000/api/masters/profiles/upload", userImage)
+          .post(
+            "http://localhost:3000/api/ContactPictures/profiles/upload",
+            userImage
+          )
           .then(resolve => {
             // console.log("resolve ", resolve);
             const image = resolve.data.result.files.profile;
@@ -83,7 +86,7 @@ const actions = {
                   resolve.data.result.files.profile[0].container;
                 const name = resolve.data.result.files.profile[0].name;
                 const url =
-                  "http://localhost:3000/api/masters/" +
+                  "http://localhost:3000/api/ContactPictures/" +
                   container +
                   "/files/" +
                   name;
@@ -209,20 +212,23 @@ const actions = {
     });
   },
   getProfilePicture(context) {
-    console.log(context.state.logged_user.photo[0].container);
-    const container = context.state.logged_user.photo[0].container;
-    const fileName = context.state.logged_user.photo[0].name;
-    const url =
-      "http://localhost:3000/api/masters/" +
-      container +
-      "/download/" +
-      fileName +
-      "?access_token=asdfsdf";
-    axios.get(url).then(result => {
-      console.log(result.request.responseURL);
-      context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
-    });
+    if (context.getters.isLoggedIn) {
+      console.log(context.state.logged_user.photo[0].container);
+      const container = context.state.logged_user.photo[0].container;
+      const fileName = context.state.logged_user.photo[0].name;
+      const url =
+        "http://localhost:3000/api/ContactPictures/" +
+        container +
+        "/download/" +
+        fileName +
+        "?access_token=asdfsdf";
+      axios.get(url).then(result => {
+        console.log(result.request.responseURL);
+        context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
+      });
+    }
   }
+  // editContact(context, payload) {}
 };
 
 export default new vuex.Store({
