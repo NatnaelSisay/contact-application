@@ -222,10 +222,17 @@ const actions = {
         "/download/" +
         fileName +
         "?access_token=asdfsdf";
-      axios.get(url).then(result => {
-        console.log(result.request.responseURL);
-        context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
-      });
+      axios
+        .get(url)
+        .then(result => {
+          console.log(result.request.responseURL);
+          context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
+        })
+        .catch(() => {
+          console.log(
+            "[PROFILE PICTURE] is not found, It may have been deleted"
+          );
+        });
     }
   },
   editContact(context, payload) {
