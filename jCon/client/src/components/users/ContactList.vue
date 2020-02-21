@@ -13,7 +13,7 @@
           v-for="contact in contacts"
           :key="contact.id"
           three-line=""
-          :to="`/user/contacts/${contact.phone_number}`"
+          :to="`/user/contacts/${contact.id}`"
         >
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/81.jpg"></v-img>
@@ -53,7 +53,7 @@ export default {
   name: "contactList",
   data() {
     return {
-      contacts: null
+      contact_list: null
     };
   },
   methods: {
@@ -62,7 +62,8 @@ export default {
     // }
   },
   created() {
-    this.contacts = [
+    this.$store.dispatch("getContactList");
+    this.contact_list = [
       {
         id: 1,
         name: "Ermias Amelga",
@@ -94,6 +95,12 @@ export default {
         picture: "Photo"
       }
     ];
+  },
+  computed: {
+    contacts: function() {
+      // return them according to the names order
+      return this.$store.getters.getContacts;
+    }
   }
 };
 </script>

@@ -9,12 +9,16 @@ const state = {
   status: "",
   logged_user: {},
   access_token: localStorage.getItem("access_token") || "",
-  contactAdded: false
+  contactAdded: false,
+  contacts: [],
+  contactDetail: {}
 };
 const getters = {
   isLoggedIn: state => !!state.access_token,
   authStatus: state => state.status,
-  getLoggedUser: state => state.logged_user
+  getLoggedUser: state => state.logged_user,
+  getContacts: state => state.contacts,
+  getDetail: state => state.contactDetail
 };
 
 const mutations = {
@@ -35,6 +39,12 @@ const mutations = {
 
   CONTACT_ADDED(state) {
     state.contactAdded = true;
+  },
+  ADD_CONTACT_LIST(state, contact_list) {
+    state.contacts = contact_list;
+  },
+  CONTACT_DETAIL(state, detail) {
+    state.contactDetail = detail;
   }
 };
 
@@ -157,15 +167,33 @@ const actions = {
         });
     });
   },
-  getContact({ state }, payload) {
+  getContactList(context) {
     return new Promise((resolve, reject) => {
       axios
         .get(
           "http://localhost:3000/api/contacts?access_token=" +
-            state.access_token
+            context.state.access_token
         )
         .then(result => {
-          console.log(result);
+          console.log(result.data);
+          context.commit("ADD_CONTACT_LIST", result.data);
+          // context.commit("CONTACT_ADDED");
+          resolve();
+        })
+        .catch(error => {
+          console.log(error);
+          reject();
+        });
+    });
+  },
+  getContactById(context, id) {
+    return new Promise((resolve, reject) => {
+      const url = "http://localhost:3000/api/contacts/" + id + "?access_token=";
+      axios
+        .get(url + context.state.access_token)
+        .then(result => {
+          console.log(result.data);
+          context.commit("CONTACT_DETAIL", result.data);
           // context.commit("CONTACT_ADDED");
           resolve();
         })
