@@ -40,18 +40,65 @@ const mutations = {
 
 const actions = {
   register(context, payload) {
-    // logged_user NEED TO LOGIN AFTER REGISTRATION
-    return new Promise(resolve => {
-      axios
-        .post("http://localhost:3000/api/Owners", payload.logged_user)
-        .then(result => {
-          // logged_user SUCCESSFULLY CREATED
-          // console.log(result);
-          resolve(result);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+    // console.log(payload.image);
+    return new Promise(res => {
+      if (payload.image) {
+        const userImage = new FormData();
+        userImage.append("profile", payload.image, payload.image.name);
+        // console.log(
+        //   "Image file name inside the request : -> " + payload.image.name
+        // );
+        axios
+          .post("http://localhost:3000/api/masters/profiles/upload", userImage)
+          .then(resolve => {
+            // console.log("resolve ", resolve);
+            const image = resolve.data.result.files.profile;
+            payload.user.photo = image;
+            axios
+              .post("http://localhost:3000/api/Owners", payload.user)
+              .then(result => {
+                console.log("REGISTRATION WAS SUCCESSFULL");
+                // console.log(result);
+                res(result);
+              })
+              .catch(() => {
+                console.log("User already exist");
+                console.log(resolve);
+                const container =
+                  resolve.data.result.files.profile[0].container;
+                const name = resolve.data.result.files.profile[0].name;
+                const url =
+                  "http://localhost:3000/api/masters/" +
+                  container +
+                  "/files/" +
+                  name;
+                // console.log("Container : " + container + " Name : " + name);
+                axios
+                  .delete(url)
+                  .then(() => {
+                    console.log("Imge was deleted");
+                  })
+                  .catch(() => {
+                    console.log("Image deletion problem");
+                  });
+              });
+          })
+          .catch(err => {
+            console.log("No Nigger we are fucked up " + err);
+          });
+      } else {
+        axios
+          .post("http://localhost:3000/api/Owners", payload.user)
+          .then(result => {
+            console.log("REGISTRATION WAS SUCCESSFULL");
+            // console.log(result);
+            res(result);
+          })
+          .catch(() => {
+            console.log("User already exist");
+            console.log("No Profie picture");
+          });
+      }
     });
   },
   login(context, payload) {
@@ -61,9 +108,9 @@ const actions = {
         .post("http://localhost:3000/api/Owners/login?include=User", payload)
         .then(result => {
           const access_token = result.data.id;
-          const theUser = result.data.user;
+          // const theUser = result.data.user;
           console.log("logged IN user ");
-          console.log(theUser);
+          // console.log(theUser);
 
           localStorage.setItem("access_token", access_token);
           axios.defaults.headers.common["Authorization"] = access_token;
@@ -76,6 +123,7 @@ const actions = {
         .catch(err => {
           context.commit("AUTH_ERROR");
           localStorage.removeItem("access_token");
+          localStorage.removeItem("vuex");
           reject(err);
         });
     });
@@ -97,6 +145,24 @@ const actions = {
           "http://localhost:3000/api/contacts?access_token=" +
             state.access_token,
           payload
+        )
+        .then(result => {
+          console.log(result);
+          // context.commit("CONTACT_ADDED");
+          resolve();
+        })
+        .catch(error => {
+          console.log(error);
+          reject();
+        });
+    });
+  },
+  getContact({ state }, payload) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(
+          "http://localhost:3000/api/contacts?access_token=" +
+            state.access_token
         )
         .then(result => {
           console.log(result);

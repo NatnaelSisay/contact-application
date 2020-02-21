@@ -244,16 +244,12 @@ export default {
       const value = this.$refs.observer.validate();
       value
         .then(resolve => {
-          // here we will send the request to the server
-          // console.log(" form Validated : " + resolve);
-          // console.log(this.$refs.fileInput);
-
           if (resolve) {
             // dispatch reigster user
             const theUser = {
               name: this.user.name,
               phone_number: this.user.phone_number,
-              photo: "no photo",
+              photo: "avatar",
               realm: "novalue",
               username: this.user.name,
               email: this.user.email,
@@ -290,7 +286,7 @@ export default {
       // FIX ISSUE
       const selectedFile = event.target.files[0];
       this.avatar = URL.createObjectURL(selectedFile);
-      this.photo = selectedFile;
+      this.user.photo = selectedFile;
       console.log(selectedFile);
     }
   }
