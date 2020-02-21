@@ -14,13 +14,14 @@
 
         <v-list-item link to="/user/editProfile">
           <v-list-item-avatar>
-            <img :src="user.photo" />
+            <img :src="user.profile" />
           </v-list-item-avatar>
           <!-- end of avatart -->
 
           <v-list-item-content>
             <v-list-item-title>{{ user.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ user.phone_number }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
           </v-list-item-content>
           <!-- end of v-list-item-content -->
         </v-list-item>
@@ -83,13 +84,19 @@ export default {
       user: {}
     };
   },
-  created() {
+  beforeCreate() {
+    // this.$store.dispatch("getProfilePicture");
+  },
+  mounted() {
     // the logged in should be put in put to the state, so we could getch it from there
-    this.user = {
-      name: "Java",
-      phone_number: "0949632242",
-      photo: "https://randomuser.me/api/portraits/men/81.jpg"
-    };
+    if (this.$store.getters.getLoggedUser.photo != "avatar") {
+      this.$store.dispatch("getProfilePicture");
+    } else {
+      this.user.profile = "https://randomuser.me/api/portraits/men/81.jpg";
+    }
+
+    this.user = this.$store.getters.getLoggedUser;
+    // this.user.photo = "https://randomuser.me/api/portraits/men/81.jpg";
   },
   computed: {
     isLoggedIn: function() {

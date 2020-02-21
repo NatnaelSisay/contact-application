@@ -16,7 +16,7 @@
           :to="`/user/contacts/${contact.id}`"
         >
           <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/81.jpg"></v-img>
+            <v-img :src="avatar"></v-img>
             <!-- {{ contact.picture }} -->
           </v-list-item-avatar>
           <!-- end of avatar -->
@@ -53,7 +53,8 @@ export default {
   name: "contactList",
   data() {
     return {
-      contact_list: null
+      contact_list: null,
+      avatar: null
     };
   },
   methods: {
@@ -62,6 +63,7 @@ export default {
     // }
   },
   created() {
+    this.avatar = require("@/assets/avatar.png");
     this.$store.dispatch("getContactList");
     this.contact_list = [
       {

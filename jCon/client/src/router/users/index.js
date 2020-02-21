@@ -24,7 +24,7 @@ const routes = [
         component: AddContact
       },
       {
-        path: "contacts/:phone_number",
+        path: "contacts/:id",
         component: ContactDetail
       },
       {

@@ -11,7 +11,8 @@ const state = {
   access_token: localStorage.getItem("access_token") || "",
   contactAdded: false,
   contacts: [],
-  contactDetail: {}
+  contactDetail: {},
+  profilePicture: null
 };
 const getters = {
   isLoggedIn: state => !!state.access_token,
@@ -45,6 +46,10 @@ const mutations = {
   },
   CONTACT_DETAIL(state, detail) {
     state.contactDetail = detail;
+  },
+  SET_PROFILE_PICTURE(state, picture) {
+    console.log(picture);
+    state.logged_user.profile = picture;
   }
 };
 
@@ -201,6 +206,21 @@ const actions = {
           console.log(error);
           reject();
         });
+    });
+  },
+  getProfilePicture(context) {
+    console.log(context.state.logged_user.photo[0].container);
+    const container = context.state.logged_user.photo[0].container;
+    const fileName = context.state.logged_user.photo[0].name;
+    const url =
+      "http://localhost:3000/api/masters/" +
+      container +
+      "/download/" +
+      fileName +
+      "?access_token=asdfsdf";
+    axios.get(url).then(result => {
+      console.log(result.request.responseURL);
+      context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
     });
   }
 };
