@@ -1,5 +1,5 @@
 {
-  "db": {
+  "dbLocal": {
     "name": "db",
     "connector": "memory"
   },
@@ -9,5 +9,16 @@
     "provider": "filesystem",
     "root": "profiles",
     "nameConflict": "makeUnique"
+  },
+  "db": {
+    "host": "",
+    "port": 0,
+    "url": "mongodb://localhost:27017/contact",
+    "database": "",
+    "password": "",
+    "name": "mongodbConnector",
+    "user": "",
+    "useNewUrlParser": true,
+    "connector": "mongodb"
   }
 }
