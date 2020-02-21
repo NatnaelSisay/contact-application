@@ -1,6 +1,6 @@
 {
   "dbLocal": {
-    "name": "db",
+    "name": "dbLocal",
     "connector": "memory"
   },
   "Pictures": {
@@ -16,7 +16,7 @@
     "url": "mongodb://localhost:27017/contact",
     "database": "",
     "password": "",
-    "name": "mongodbConnector",
+    "name": "db",
     "user": "",
     "useNewUrlParser": true,
     "connector": "mongodb"

@@ -14,16 +14,21 @@
       "type": "string",
       "required": true
     },
-    "owner": {
-      "type": "string",
-      "required": true
-    },
     "photo": {
       "type": "any"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "model": "Owner",
+      "foreignKey": "",
+      "options": {
+        "nestRemoting": true
+      }
+    }
+  },
   "acls": [
     {
       "accessType": "*",
