@@ -227,8 +227,25 @@ const actions = {
         context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
       });
     }
+  },
+  editContact(context, payload) {
+    const user = payload.user;
+    const id = payload.id;
+    const url = "http://localhost:3000/api/contacts/" + id + "/replace";
+    return new Promise((resolve, reject) => {
+      axios
+        .post(url, user)
+        .then(result => {
+          console.log("USER EDITED IN STATE");
+          resolve(result);
+        })
+        .catch(error => {
+          console.log("[ERROR] USER NOT EDITED");
+          console.log(error);
+          reject(error);
+        });
+    });
   }
-  // editContact(context, payload) {}
 };
 
 export default new vuex.Store({

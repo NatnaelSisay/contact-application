@@ -1,26 +1,53 @@
 <template>
-  <v-card class="mx-auto" max-width="400">
-    <v-img class="black--text align-end" height="200px" :src="avatar">
-      <v-card-title>{{ contact.name }}</v-card-title>
-    </v-img>
-    <!-- end of v-img -->
+  <div>
+    <v-card class="mx-auto" raised max-width="700" outlined>
+      <v-img class="black--text align-end" height="200px" :src="avatar">
+        <v-card-title>{{ contact.name }}</v-card-title>
+      </v-img>
+      <v-card-subtitle class="pb-0">Additional Informations</v-card-subtitle>
+      <v-card-text>
+        <v-form action="#" @submit.prevent="save">
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                label="Name"
+                outlined
+                v-model="contact.name"
+                :disabled="!editable"
+              >
+              </v-text-field>
+              <!-- end of v-text-field for phone number -->
+              <v-text-field
+                label="Password"
+                v-model="contact.phone_number"
+                :disabled="!editable"
+                outlined
+              >
+              </v-text-field>
+              <!-- end of v-text-field for password -->
+              <div class="d-flex justify-space-between">
+                <v-btn @click="edit" v-if="!editable">Edit</v-btn>
+                <v-btn v-else @click="edit"> Cancel </v-btn>
+                <v-btn
+                  text
+                  type="submit"
+                  color="success"
+                  v-if="editable"
+                  value="Save"
+                  >Save</v-btn
+                >
+              </div>
+            </v-col>
+            <!-- end of v-col -->
+          </v-row>
+          <!-- end of v-row -->
+        </v-form>
+        <!-- end of v-form -->
+      </v-card-text>
+      <!-- end of v-card-text -->
+    </v-card>
+  </div>
 
-    <v-card-subtitle class="pb-0">Additional Informations</v-card-subtitle>
-
-    <v-card-text class="text--info" color="red--text">
-      <div>Phone Number : {{ contact.phone_number }}</div>
-    </v-card-text>
-
-    {{ the_phone }}
-    <!-- end of v-card-text -->
-
-    <v-card-actions>
-      <v-btn color="orange" text>
-        Edit
-      </v-btn>
-    </v-card-actions>
-    <!-- end of v-card-actions -->
-  </v-card>
   <!-- end of v-card -->
 </template>
 
@@ -31,10 +58,11 @@ export default {
     return {
       contact: {
         name: null,
-        phoneNumber: null,
+        phone: null,
         photo: null
       },
-      avatar: null
+      avatar: null,
+      editable: false
     };
   },
   created() {
@@ -51,6 +79,32 @@ export default {
       // this.phone =
       return this.$router.history.current.params.phone_number;
       // return "this.$router.params.phone_number";
+    }
+  },
+
+  methods: {
+    edit() {
+      this.editable = !this.editable;
+    },
+    save() {
+      // send user data, with id
+      const newInfo = {};
+      newInfo.name = this.contact.name;
+      newInfo.phone_number = this.contact.phone_number;
+      newInfo.owner = this.contact.owner;
+      newInfo.photo = this.contact.photo;
+      const id = this.contact.id;
+      this.$store
+        .dispatch("editContact", { user: newInfo, id: id })
+        .then(resolve => {
+          console.log("USER EDITED");
+          console.log(resolve);
+          this.$router.push("/user/contacts");
+        })
+        .catch(error => {
+          console.log("User not edited");
+          console.log(error);
+        });
     }
   }
 };
