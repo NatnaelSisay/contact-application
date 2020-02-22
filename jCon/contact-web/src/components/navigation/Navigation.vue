@@ -14,7 +14,7 @@
 
         <v-list-item link to="/user/editProfile">
           <v-list-item-avatar>
-            <img :src="user.profile" />
+            <img :src="user.photo" />
           </v-list-item-avatar>
           <!-- end of avatart -->
 
@@ -77,11 +77,11 @@
 
 <script>
 export default {
-  name: "navigation-panel",
+  name: 'navigation-panel',
   data() {
     return {
       drawer: false, // Hide mobile side menu by default
-      user: {}
+      user: {},
     };
   },
   beforeCreate() {
@@ -89,32 +89,31 @@ export default {
   },
   mounted() {
     // the logged in should be put in put to the state, so we could getch it from there
-    if (this.$store.getters.getLoggedUser.photo != "avatar") {
-      this.$store.dispatch("getProfilePicture");
-    } else {
-      this.user.profile = "https://randomuser.me/api/portraits/men/81.jpg";
-    }
 
     this.user = this.$store.getters.getLoggedUser;
+    // this.$store.dispatch('getProfilePicture');
+    if (this.$store.getters.getProfilePicture == 'avatar') {
+      this.user.profile = require('@/assets/avatar.png');
+    }
     // this.user.photo = "https://randomuser.me/api/portraits/men/81.jpg";
   },
   computed: {
     isLoggedIn: function() {
       return this.$store.getters.isLoggedIn;
-    }
+    },
   },
   methods: {
     logout() {
       this.$store
-        .dispatch("logout")
+        .dispatch('logout')
         .then(() => {
-          this.$router.push("/login");
+          this.$router.push('/login');
         })
         .catch(error => {
-          console.log("[ ERROR ] logout, token may be expired");
+          console.log('[ ERROR ] logout, token may be expired');
           console.log(error);
         });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -1,41 +1,42 @@
-import vue from "vue";
-import vuex from "vuex";
-import axios from "axios";
-import createPersistedState from "vuex-persistedstate";
+import vue from 'vue';
+import vuex from 'vuex';
+import axios from 'axios';
+import createPersistedState from 'vuex-persistedstate';
 
 vue.use(vuex);
 
 const state = {
-  status: "",
+  status: '',
   logged_user: {},
-  access_token: localStorage.getItem("access_token") || "",
+  access_token: localStorage.getItem('access_token') || '',
   contactAdded: false,
   contacts: [],
   contactDetail: {},
-  profilePicture: null
+  profilePicture: null,
 };
 const getters = {
   isLoggedIn: state => !!state.access_token,
   authStatus: state => state.status,
   getLoggedUser: state => state.logged_user,
   getContacts: state => state.contacts,
-  getDetail: state => state.contactDetail
+  getDetail: state => state.contactDetail,
+  getProfilePicture: state => state.logged_user.photo,
 };
 
 const mutations = {
   AUTH_SUCCESS(state, access_token) {
     state.access_token = access_token;
-    state.status = "success";
+    state.status = 'success';
   },
   AUTH_USER(state, user_info) {
     state.logged_user = user_info;
   },
   AUTH_ERROR(state) {
-    state.status = "error";
+    state.status = 'error';
   },
   LOGOUT(state) {
-    state.access_token = "";
-    state.status = "";
+    state.access_token = '';
+    state.status = '';
   },
 
   CONTACT_ADDED(state) {
@@ -49,72 +50,126 @@ const mutations = {
   },
   SET_PROFILE_PICTURE(state, picture) {
     console.log(picture);
-    state.logged_user.profile = picture;
-  }
+    state.logged_user.photo = picture;
+  },
 };
 
 const actions = {
+  construcImageUrl(context, imageInformation) {
+    /**
+     * Build the image url based on the image uploaded return value.
+     * return URl of the image loaction.
+     */
+    const container = imageInformation.data.result.files.profile[0].container;
+    const name = imageInformation.data.result.files.profile[0].name;
+    const url =
+      'http://localhost:3000/api/ContactPictures/' +
+      container +
+      '/download/' +
+      name;
+    console.log('The image url : -> ' + url);
+    return url;
+  },
+  uploadImage(context, upload) {
+    /**
+		UPLOAD IMAGE TO DESIRED LOCATION
+		return :-> Promise
+
+    payload should contain where to upload, and the image data
+    upload.url :-> url to upload the image
+		upload.imageFile :-> the actual image data to send
+		
+		*/
+    const userImage = new FormData(); // we are about to send an image
+    // add image we recived from paylaod
+    userImage.append('profile', upload.imageFile, upload.imageFile.name);
+    return axios.post(upload.url, userImage);
+  },
+  addOwner(context, ownerInfo) {
+    /**
+     * Will Add owner to database with Profile picture or not
+     * return :-> promise
+     *
+     * ownerInfo.user :-> all the data of the user
+     * ownerInfo.photo :-> the actual image || "avatar"
+     */
+    ownerInfo.user.photo = ownerInfo.photo || 'avatar';
+    axios.post('http://localhost:3000/api/Owners', ownerInfo.user);
+  },
   register(context, payload) {
-    // console.log(payload.image);
-    return new Promise(res => {
+    /**
+		 * register : -> will add a new user to the database
+		 * payload : -> contain user credential sent from a form
+		 * 						contain {
+		 *											user : { name, email, passowrd, username, emailVerified: true,realm: "novalue", }
+														image : { image }
+												}
+		 */
+    return new Promise((res, rej) => {
       if (payload.image) {
-        const userImage = new FormData();
-        userImage.append("profile", payload.image, payload.image.name);
-        // console.log(
-        //   "Image file name inside the request : -> " + payload.image.name
-        // );
-        axios
-          .post(
-            "http://localhost:3000/api/ContactPictures/profiles/upload",
-            userImage
-          )
-          .then(resolve => {
-            // console.log("resolve ", resolve);
-            const image = resolve.data.result.files.profile;
-            payload.user.photo = image;
-            axios
-              .post("http://localhost:3000/api/Owners", payload.user)
-              .then(result => {
-                console.log("REGISTRATION WAS SUCCESSFULL");
-                // console.log(result);
-                res(result);
-              })
-              .catch(() => {
-                console.log("User already exist");
-                console.log(resolve);
-                const container =
-                  resolve.data.result.files.profile[0].container;
-                const name = resolve.data.result.files.profile[0].name;
-                const url =
-                  "http://localhost:3000/api/ContactPictures/" +
-                  container +
-                  "/files/" +
-                  name;
-                // console.log("Container : " + container + " Name : " + name);
-                axios
-                  .delete(url)
-                  .then(() => {
-                    console.log("Imge was deleted");
+        // USER SELECTED PROFILE PICTURE TO UPLOAD
+        /**
+         * The method i used to register a user,
+         * First upload the picture selected to get the image location,
+         * Then try to register the user
+         * 	if the user already exist or can't create a user, delete the image also
+         * 	if user is created pass the image location to the user.
+         */
+
+        // UPLOAD THE IMAGE
+        context
+          .dispatch('uploadImage', {
+            url: 'http://localhost:3000/api/ContactPictures/profiles/upload',
+            imageFile: payload.image,
+          })
+          .then(uploadedImage => {
+            // console.log('image uploaded');
+            // console.log(resolve);
+
+            // CLEAN OUT THE URL OF IMAGE FOR USER
+            context
+              .dispatch('construcImageUrl', uploadedImage)
+              .then(imageUrl => {
+                // REGISTER THE USER
+                console.log('The Image Url ' + imageUrl);
+                context
+                  .dispatch('addOwner', {
+                    user: payload.user,
+                    photo: imageUrl,
+                  })
+                  .then(registeredUser => {
+                    // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
+                    res(registeredUser);
+                    // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
                   })
                   .catch(() => {
-                    console.log("Image deletion problem");
+                    // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
+                    rej();
+                    // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
                   });
               });
           })
-          .catch(err => {
-            console.log("No Nigger we are fucked up " + err);
+          .catch(() => {
+            // ******* NOTIFICATION [ IMAGE NOT UPLOADED ] ****
+            // SERVER DOWN , TRY AGAIN LETTER
+            console.log('image was not uploaded');
+            // ******* NOTIFICATION [ IMAGE NOT UPLOADED ] ****
           });
       } else {
-        axios
-          .post("http://localhost:3000/api/Owners", payload.user)
-          .then(result => {
-            console.log("REGISTRATION WAS SUCCESSFULL");
-            // console.log(result);
-            res(result);
+        context
+          .dispatch('addOwner', {
+            user: payload.user,
+            photo: null,
+          })
+          .then(registeredUser => {
+            // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
+            res(registeredUser);
+            // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
           })
           .catch(() => {
-            console.log("User already exist");
-            console.log("No Profie picture");
+            // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
+            rej();
+            // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
           });
       }
     });
@@ -123,35 +178,35 @@ const actions = {
     // console.log(payload);
     return new Promise((resolve, reject) => {
       axios
-        .post("http://localhost:3000/api/Owners/login?include=User", payload)
+        .post('http://localhost:3000/api/Owners/login?include=User', payload)
         .then(result => {
           const access_token = result.data.id;
           // const theUser = result.data.user;
-          console.log("logged IN user ");
+          console.log('logged IN user ');
           // console.log(theUser);
 
-          localStorage.setItem("access_token", access_token);
-          axios.defaults.headers.common["Authorization"] = access_token;
+          localStorage.setItem('access_token', access_token);
+          axios.defaults.headers.common['Authorization'] = access_token;
 
-          context.commit("AUTH_SUCCESS", access_token);
-          context.commit("AUTH_USER", result.data.user);
+          context.commit('AUTH_SUCCESS', access_token);
+          context.commit('AUTH_USER', result.data.user);
 
           resolve(result);
         })
         .catch(err => {
-          context.commit("AUTH_ERROR");
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("vuex");
+          context.commit('AUTH_ERROR');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('vuex');
           reject(err);
         });
     });
   },
   logout(context) {
     return new Promise(resolve => {
-      context.commit("LOGOUT");
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("vuex");
-      delete axios.defaults.headers.common["Authentication"];
+      context.commit('LOGOUT');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('vuex');
+      delete axios.defaults.headers.common['Authentication'];
       resolve();
     });
   },
@@ -160,7 +215,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       axios
         .post(
-          "http://localhost:3000/api/contacts?access_token=" +
+          'http://localhost:3000/api/contacts?access_token=' +
             state.access_token,
           payload
         )
@@ -179,12 +234,12 @@ const actions = {
     return new Promise((resolve, reject) => {
       axios
         .get(
-          "http://localhost:3000/api/contacts?access_token=" +
+          'http://localhost:3000/api/contacts?access_token=' +
             context.state.access_token
         )
         .then(result => {
           console.log(result.data);
-          context.commit("ADD_CONTACT_LIST", result.data);
+          context.commit('ADD_CONTACT_LIST', result.data);
           // context.commit("CONTACT_ADDED");
           resolve();
         })
@@ -194,14 +249,27 @@ const actions = {
         });
     });
   },
+  // getProfilePicture(context) {
+  //   if (context.state.logged_user.photo != 'avatar') {
+  //     axios
+  //       .get(context.state.logged_user.photo)
+  //       .then(result => {
+  //         context.commit('SET_PROFILE_PICTURE', result);
+  //       })
+  //       .catch(() => {
+  //         // **** NOTIFICATION [CAN'T GET PROFILE PICTURE] ****
+  //         // **** NOTIFICATION [CAN'T GET PROFILE PICTURE] ****
+  //       });
+  //   }
+  // },
   getContactById(context, id) {
     return new Promise((resolve, reject) => {
-      const url = "http://localhost:3000/api/contacts/" + id + "?access_token=";
+      const url = 'http://localhost:3000/api/contacts/' + id + '?access_token=';
       axios
         .get(url + context.state.access_token)
         .then(result => {
           console.log(result.data);
-          context.commit("CONTACT_DETAIL", result.data);
+          context.commit('CONTACT_DETAIL', result.data);
           // context.commit("CONTACT_ADDED");
           resolve();
         })
@@ -211,48 +279,24 @@ const actions = {
         });
     });
   },
-  getProfilePicture(context) {
-    if (context.getters.isLoggedIn) {
-      console.log(context.state.logged_user.photo[0].container);
-      const container = context.state.logged_user.photo[0].container;
-      const fileName = context.state.logged_user.photo[0].name;
-      const url =
-        "http://localhost:3000/api/ContactPictures/" +
-        container +
-        "/download/" +
-        fileName +
-        "?access_token=asdfsdf";
-      axios
-        .get(url)
-        .then(result => {
-          console.log(result.request.responseURL);
-          context.commit("SET_PROFILE_PICTURE", result.request.responseURL);
-        })
-        .catch(() => {
-          console.log(
-            "[PROFILE PICTURE] is not found, It may have been deleted"
-          );
-        });
-    }
-  },
   editContact(context, payload) {
     const user = payload.user;
     const id = payload.id;
-    const url = "http://localhost:3000/api/contacts/" + id + "/replace";
+    const url = 'http://localhost:3000/api/contacts/' + id + '/replace';
     return new Promise((resolve, reject) => {
       axios
         .post(url, user)
         .then(result => {
-          console.log("USER EDITED IN STATE");
+          console.log('USER EDITED IN STATE');
           resolve(result);
         })
         .catch(error => {
-          console.log("[ERROR] USER NOT EDITED");
+          console.log('[ERROR] USER NOT EDITED');
           console.log(error);
           reject(error);
         });
     });
-  }
+  },
 };
 
 export default new vuex.Store({
@@ -260,5 +304,5 @@ export default new vuex.Store({
   getters,
   mutations,
   actions,
-  plugins: [createPersistedState()]
+  plugins: [createPersistedState()],
 });
