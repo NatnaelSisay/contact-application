@@ -16,11 +16,13 @@ const state = {
 };
 const getters = {
   isLoggedIn: state => !!state.access_token,
+  getToken: state => state.access_token,
   authStatus: state => state.status,
   getLoggedUser: state => state.logged_user,
   getContacts: state => state.contacts,
   getDetail: state => state.contactDetail,
   getProfilePicture: state => state.logged_user.photo,
+  getOwerId: state => state.logged_user.id,
 };
 
 const mutations = {
@@ -212,6 +214,7 @@ const actions = {
   },
 
   addContact({ state }, payload) {
+    payload.ownerId = '5e51088409d899440cf7ec55';
     return new Promise((resolve, reject) => {
       axios
         .post(
@@ -231,37 +234,43 @@ const actions = {
     });
   },
   getContactList(context) {
+    /**
+     * getContactList :-> fetch the contact list that belong to the logged in user
+     * return :-> list of the contacts
+     *
+     * 'filter[where][ownerId]' :-> condition to filter the user list by user id
+     * access_token : -> token we get when a user is logged in
+     *
+     */
+
     return new Promise((resolve, reject) => {
+      const url = 'http://localhost:3000/api/contacts';
+
       axios
-        .get(
-          'http://localhost:3000/api/contacts?access_token=' +
-            context.state.access_token
-        )
+        .get(url, {
+          params: {
+            'filter[where][ownerId]': context.getters.getOwerId,
+            access_token: context.getters.getToken,
+          },
+        })
         .then(result => {
-          console.log(result.data);
+          // ******* CONTACTS FETCHED WAS SUCCESS FULL *****
+
           context.commit('ADD_CONTACT_LIST', result.data);
-          // context.commit("CONTACT_ADDED");
+
+          // ******* CONTACTS FETCHED WAS SUCCESS FULL *****
           resolve();
         })
         .catch(error => {
-          console.log(error);
-          reject();
+          // ******* CONTACTS FETCHED FAILED *****
+
+          // SERVER IS DOWN/ CANT' FETCH THE CONTENT
+          reject(error);
+
+          // ******* CONTACTS FETCHED FAILED *****
         });
     });
   },
-  // getProfilePicture(context) {
-  //   if (context.state.logged_user.photo != 'avatar') {
-  //     axios
-  //       .get(context.state.logged_user.photo)
-  //       .then(result => {
-  //         context.commit('SET_PROFILE_PICTURE', result);
-  //       })
-  //       .catch(() => {
-  //         // **** NOTIFICATION [CAN'T GET PROFILE PICTURE] ****
-  //         // **** NOTIFICATION [CAN'T GET PROFILE PICTURE] ****
-  //       });
-  //   }
-  // },
   getContactById(context, id) {
     return new Promise((resolve, reject) => {
       const url = 'http://localhost:3000/api/contacts/' + id + '?access_token=';
