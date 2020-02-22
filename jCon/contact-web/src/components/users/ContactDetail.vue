@@ -42,7 +42,7 @@
             >Additional Informations</v-card-subtitle
           >
           <v-card-text>
-            <ValidationObserver ref="observer">
+            <ValidationObserver ref="observer" v-slot="{}">
               <v-form action="#" @submit.prevent="save">
                 <v-row>
                   <v-col cols="12">
@@ -160,8 +160,8 @@ export default {
       .dispatch('getContactById', this.$router.history.current.params.id)
       .then(contactInfo => {
         this.contact = contactInfo;
-        console.log('RESPONSE FROM SERVER');
-        console.log(this.contact);
+        // console.log('RESPONSE FROM SERVER');
+        // console.log(this.contact);
       })
       .catch(() => {
         // ****** [ ERROR ] CONTACT CAN'T BE RETRIVED *****
@@ -182,9 +182,49 @@ export default {
     save() {
       // ****** Save ***
 
-      console.log('Edited contact data');
-      console.log(this.contact);
-      console.log('end of edited data');
+      // check form validation
+      const isFormValidated = this.$refs.observer.validate();
+
+      isFormValidated.then(isValidated => {
+        if (isValidated) {
+          // ******* FORM VALIDATED ******
+
+          // the change we need to see is for the picture
+          // if a user choose diffrent picture, we need to upload the picture again
+          // if the user don't change the picture, then we only need to send the files again
+
+          // ****** DATA CLEANUP *******
+          const contactInfo = {};
+          contactInfo.name = this.contact.name;
+          contactInfo.phone_number = this.contact.phone_number;
+          contactInfo.id = this.contact.id;
+          contactInfo.photo = this.contact.photo;
+          contactInfo.ownerId = this.contact.ownerId;
+
+          // ****** DATA CLEANUP *******
+
+          if (typeof contactInfo.photo == 'string') {
+            // ********** user haven't changed the picture. ******
+            // console.log('client');
+            // console.log(this.contact);
+            this.$store
+              .dispatch('normalEditContact', contactInfo)
+              .then(() => {
+                // ********** [ SUCCESS ] NOTIFICATION CONTACT HAS BEEN UPDATED *******
+
+                this.$router.push('/user/contacts');
+
+                // ********** [ SUCCESS ] CONTACT HAS BEEN UPDATED *******
+              })
+              .catch(() => {
+                // ********* [ ERROR ] NOTIFICATION CONTACT CAN'T BE UPDATED **********
+                // ********* [ ERROR ] NOTIFICATION CONTACT CAN'T BE UPDATED **********
+              });
+          } else {
+            console.log('profile selected');
+          }
+        }
+      });
     },
     avatarSelected() {
       /**

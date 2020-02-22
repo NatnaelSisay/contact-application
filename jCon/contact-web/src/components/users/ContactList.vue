@@ -71,7 +71,6 @@ export default {
     contacts: function() {
       // Give sorted Contact list
       let cont = this.$store.getters.getContacts;
-      console.log(cont);
       function compare(a, b) {
         if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
         if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;

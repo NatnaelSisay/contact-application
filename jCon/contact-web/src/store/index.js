@@ -360,20 +360,25 @@ const actions = {
         });
     });
   },
-  editContact(context, payload) {
-    const user = payload.user;
+  normalEditContact(context, payload) {
+    const contact = payload;
     const id = payload.id;
     const url = 'http://localhost:3000/api/contacts/' + id + '/replace';
+
     return new Promise((resolve, reject) => {
       axios
-        .post(url, user)
+        .post(url, contact, {
+          params: {
+            access_token: context.getters.getToken,
+          },
+        })
         .then(result => {
-          console.log('USER EDITED IN STATE');
+          // **** [ SUCCESS ] CONTACT WAS UPDATED *****
           resolve(result);
         })
         .catch(error => {
-          console.log('[ERROR] USER NOT EDITED');
-          console.log(error);
+          // **** [ ERROR ] CONTACT WAS NOT UPDATED ****
+          console.log('Cant update contact');
           reject(error);
         });
     });
