@@ -171,8 +171,6 @@ export default {
       .then(contactInfo => {
         this.contact = contactInfo;
         this.currentProfile = this.contact.photo;
-        // console.log('RESPONSE FROM SERVER');
-        // console.log(this.contact);
       })
       .catch(() => {
         // ****** [ ERROR ] CONTACT CAN'T BE RETRIVED *****
