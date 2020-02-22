@@ -328,19 +328,35 @@ const actions = {
     });
   },
   getContactById(context, id) {
+    /**
+     * getContactById :-> get contact detail form the database by id
+     *
+     * return :-> nothing
+     * populate the contact detial state.
+     */
+
     return new Promise((resolve, reject) => {
-      const url = 'http://localhost:3000/api/contacts/' + id + '?access_token=';
+      const url = 'http://localhost:3000/api/contacts/' + id;
       axios
-        .get(url + context.state.access_token)
+        .get(url, {
+          params: {
+            access_token: context.getters.getToken,
+          },
+        })
         .then(result => {
-          console.log(result.data);
-          context.commit('CONTACT_DETAIL', result.data);
-          // context.commit("CONTACT_ADDED");
-          resolve();
+          // ******** [ SUCCESS ] RETRIVED CONTACT *****
+
+          // context.commit('CONTACT_DETAIL', result.data);
+          resolve(result.data);
+
+          // ******** [ SUCCESS ] RETRIVED CONTACT *****
         })
         .catch(error => {
-          console.log(error);
-          reject();
+          // ******** [ ERROR ] NO CONTACT WITH THAT ID ****
+
+          reject(error);
+
+          // ******** [ ERROR ] NO CONTACT WITH THAT ID ****
         });
     });
   },
