@@ -43,28 +43,28 @@
 </template>
 <script>
 export default {
-  name: "login",
+  name: 'login',
   data() {
     return {
       user: {
         email: null,
-        password: null
-      }
+        password: null,
+      },
     };
   },
   methods: {
     login() {
-      window.alert("Login " + this.user.email + " - " + this.user.password);
       this.$store
-        .dispatch("login", this.user)
+        .dispatch('login', this.user)
         .then(() => {
-          this.$router.push("/");
+          // ***** [ SUCCESS ] LOGGED IN SUCCESSFULLY *****
+          this.$router.push('/');
         })
         .catch(error => {
-          // LOGIN filed
-          console.log(error);
+          // **** [ ERROR ] NOTIFICATION EMAIL OR PASSWORD MAY BE WRONG ***
+          // console.log(error);
         });
-    }
-  }
+    },
+  },
 };
 </script>

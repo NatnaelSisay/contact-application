@@ -178,16 +178,14 @@ const actions = {
     });
   },
 
-  login(context, payload) {
-    // console.log(payload);
+  login(context, loginInfo) {
+    const url = 'http://localhost:3000/api/Owners/login?include=User';
     return new Promise((resolve, reject) => {
       axios
-        .post('http://localhost:3000/api/Owners/login?include=User', payload)
+        .post(url, loginInfo)
         .then(result => {
+          // ******** [ SUCCESS ] USER LOGGED IN **********
           const access_token = result.data.id;
-          // const theUser = result.data.user;
-          console.log('logged IN user ');
-          // console.log(theUser);
 
           localStorage.setItem('access_token', access_token);
           axios.defaults.headers.common['Authorization'] = access_token;
@@ -198,10 +196,14 @@ const actions = {
           resolve(result);
         })
         .catch(err => {
+          // ******** [ ERRROR ] USER NOT FOUND *********
+          // clean our the localstorage
           context.commit('AUTH_ERROR');
           localStorage.removeItem('access_token');
           localStorage.removeItem('vuex');
           reject(err);
+          console.log('Error');
+          console.log(err);
         });
     });
   },
