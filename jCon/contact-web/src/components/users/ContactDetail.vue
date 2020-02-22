@@ -11,7 +11,7 @@
                 type="file"
                 style="display : none"
                 ref="fileInput"
-                :disabled="true"
+                :disabled="!editable"
                 @change="avatarSelected"
               />
               <v-avatar @click="$refs.fileInput.click()" size="250">
@@ -23,7 +23,7 @@
                 />
                 <img
                   v-else
-                  :src="contact.photo"
+                  :src="currentProfile"
                   :alt="contact.name"
                   class="img"
                 />
@@ -80,6 +80,15 @@
                     <div class="d-flex justify-space-between">
                       <v-btn @click="edit" v-if="!editable">Edit</v-btn>
                       <v-btn v-else @click="edit"> Cancel </v-btn>
+                      <v-btn
+                        text
+                        type="button"
+                        color="danger"
+                        v-if="editable"
+                        @click="reset"
+                        value="reset"
+                        >Reset</v-btn
+                      >
                       <v-btn
                         text
                         type="submit"
@@ -148,6 +157,7 @@ export default {
     return {
       contact: {},
       avatar: null,
+      currentProfile: '',
       editable: false,
     };
   },
@@ -160,6 +170,7 @@ export default {
       .dispatch('getContactById', this.$router.history.current.params.id)
       .then(contactInfo => {
         this.contact = contactInfo;
+        this.currentProfile = this.contact.photo;
         // console.log('RESPONSE FROM SERVER');
         // console.log(this.contact);
       })
@@ -221,7 +232,19 @@ export default {
                 // ********* [ ERROR ] NOTIFICATION CONTACT CAN'T BE UPDATED **********
               });
           } else {
-            console.log('profile selected');
+            this.$store
+              .dispatch('profileChangedContact', contactInfo)
+              .then(() => {
+                // ******* [ SUCCESS ] NOTIFICAITON CONTACT MODIFIED ******
+
+                this.$router.push('/user/contacts');
+
+                // ******* [ SUCCESS ] NOTIFICAITON CONTACT MODIFIED ******
+              })
+              .catch(() => {
+                // ****** [ ERROR ] NOT MODIFIED
+              });
+            // console.log('profile selected');
           }
         }
       });
@@ -234,8 +257,13 @@ export default {
        * modifies, this.avatar , this.contact.photo datas
        */
       const selectedFile = event.target.files[0];
-      // this.avatar = URL.createObjectURL(selectedFile);
+      this.currentProfile = URL.createObjectURL(selectedFile);
       this.contact.photo = selectedFile;
+    },
+
+    reset() {
+      // ***** reloading the page will remove the unsaved datas
+      this.$router.go();
     },
   },
 };

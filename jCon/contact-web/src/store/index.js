@@ -383,6 +383,55 @@ const actions = {
         });
     });
   },
+
+  profileChangedContact(context, contact) {
+    /**
+     * profileChangeContact :-> update the profile of the contact we have
+     *
+     * contact :-> { name, phone_number , id, ownerId, photo : File }
+     * the photo is the selected file
+     */
+    return new Promise((resolve, reject) => {
+      // ** UPLOAD PICTURE **
+
+      context
+        .dispatch('uploadImage', {
+          url: 'http://localhost:3000/api/ContactPictures/profiles/upload',
+          imageFile: contact.photo,
+        })
+        .then(uploadedImage => {
+          // *** GENERATE IMAGE URL **
+          context
+            .dispatch('construcImageUrl', uploadedImage)
+            .then(imageUrl => {
+              contact.photo = imageUrl;
+
+              // *** EDIT CONTACT WITH THE NEW IMAGE ***
+              context
+                .dispatch('normalEditContact', contact)
+                .then(updatedContact => {
+                  // ***** [ SUCCESS ] UPDATED PROFILE **
+
+                  resolve(updatedContact);
+
+                  // ***** [ SUCCESS ] UPDATED PROFILE **
+                })
+                .catch(error => {
+                  // ***** [ ERROR ] DIDN'T UPDATE CONTACT *******
+                  reject(error);
+                });
+            })
+            .catch(error => {
+              // ****** [ ERROR ] COULDN'T GENERATE IMAGE URL ****
+              reject(error);
+            });
+        })
+        .catch(error => {
+          // ****** [ ERROR ] **********
+          reject(error);
+        });
+    });
+  },
 };
 
 export default new vuex.Store({
