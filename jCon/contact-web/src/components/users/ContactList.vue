@@ -16,7 +16,8 @@
           :to="`/user/contacts/${contact.id}`"
         >
           <v-list-item-avatar>
-            <v-img :src="avatar"></v-img>
+            <img v-if="contact.photo == 'avatar'" :src="avatar" />
+            <img v-else :src="contact.photo" />
             <!-- {{ contact.picture }} -->
           </v-list-item-avatar>
           <!-- end of avatar -->
@@ -50,11 +51,11 @@
 </template>
 <script>
 export default {
-  name: "contactList",
+  name: 'contactList',
   data() {
     return {
       contact_list: null,
-      avatar: null
+      avatar: null,
     };
   },
   methods: {
@@ -63,46 +64,22 @@ export default {
     // }
   },
   created() {
-    this.avatar = require("@/assets/avatar.png");
-    this.$store.dispatch("getContactList");
-    this.contact_list = [
-      {
-        id: 1,
-        name: "Ermias Amelga",
-        phone_number: "0943445533",
-        picture: "Photo"
-      },
-      {
-        id: 2,
-        name: "Ermias Amelga",
-        phone_number: "0943445533",
-        picture: "Photo"
-      },
-      {
-        id: 3,
-        name: "Ermias Amelga",
-        phone_number: "0943445533",
-        picture: "Photo"
-      },
-      {
-        id: 4,
-        name: "Ermias Amelga",
-        phone_number: "0943445533",
-        picture: "Photo"
-      },
-      {
-        id: 5,
-        name: "Ermias Amelga",
-        phone_number: "0943445533",
-        picture: "Photo"
-      }
-    ];
+    this.avatar = require('@/assets/avatar.png');
+    this.$store.dispatch('getContactList');
   },
   computed: {
     contacts: function() {
-      // return them according to the names order
-      return this.$store.getters.getContacts;
-    }
-  }
+      // Give sorted Contact list
+      let cont = this.$store.getters.getContacts;
+      console.log(cont);
+      function compare(a, b) {
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+        return 0;
+      }
+
+      return cont.sort(compare);
+    },
+  },
 };
 </script>
