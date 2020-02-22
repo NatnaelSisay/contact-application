@@ -78,8 +78,17 @@
                     </ValidationProvider>
                     <!-- end of v-text-field for password -->
                     <div class="d-flex justify-space-between">
-                      <v-btn @click="edit" v-if="!editable">Edit</v-btn>
+                      <v-btn @click="edit" v-if="!editable" color="success">
+                        Edit</v-btn
+                      >
                       <v-btn v-else @click="edit"> Cancel </v-btn>
+                      <v-btn
+                        @click="deleteContact"
+                        v-if="!editable"
+                        color="error"
+                        >Delete</v-btn
+                      >
+
                       <v-btn
                         text
                         type="button"
@@ -176,14 +185,6 @@ export default {
         // ****** [ ERROR ] CONTACT CAN'T BE RETRIVED *****
       });
   },
-  computed: {
-    the_phone: function() {
-      // this.phone =
-      return this.$router.history.current.params.phone_number;
-      // return "this.$router.params.phone_number";
-    },
-  },
-
   methods: {
     edit() {
       this.editable = !this.editable;
@@ -262,6 +263,16 @@ export default {
     reset() {
       // ***** reloading the page will remove the unsaved datas
       this.$router.go();
+    },
+    deleteContact() {
+      this.$store
+        .dispatch('deleteContact', this.contact.id)
+        .then(() => {
+          this.$router.push('/user/contacts');
+        })
+        .catch(() => {
+          // **** [ ERROR ] CAN'T DELETE USER ****
+        });
     },
   },
 };

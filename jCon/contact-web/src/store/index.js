@@ -432,6 +432,26 @@ const actions = {
         });
     });
   },
+
+  deleteContact(context, contactId) {
+    return new Promise((resolve, reject) => {
+      const url = 'http://localhost:3000/api/contacts/' + contactId;
+      axios
+        .delete(url)
+        .then(result => {
+          // *****[ SUCCESS ] DELETED CONTACT *****
+
+          resolve(result);
+
+          // *****[ SUCCESS ] DELETED CONTACT *****
+        })
+        .catch(error => {
+          // *****[ ERROR ] NO CONTACT DELETED *****
+          reject(error);
+          // *****[ ERROR ] NO CONTACT DELETED *****
+        });
+    });
+  },
 };
 
 export default new vuex.Store({
