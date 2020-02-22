@@ -53,23 +53,19 @@
 
 <script>
 export default {
-  name: "contactDetail",
+  name: 'contactDetail',
   data() {
     return {
-      contact: {
-        name: null,
-        phone: null,
-        photo: null
-      },
+      contact: {},
       avatar: null,
-      editable: false
+      editable: false,
     };
   },
   created() {
     // this will call the state. and the result will be assigned here
-    this.avatar = require("@/assets/avatar.png");
+    this.avatar = require('@/assets/avatar.png');
     this.$store
-      .dispatch("getContactById", this.$router.history.current.params.id)
+      .dispatch('getContactById', this.$router.history.current.params.id)
       .then(() => {
         this.contact = this.$store.getters.getDetail;
       });
@@ -79,7 +75,7 @@ export default {
       // this.phone =
       return this.$router.history.current.params.phone_number;
       // return "this.$router.params.phone_number";
-    }
+    },
   },
 
   methods: {
@@ -88,24 +84,10 @@ export default {
     },
     save() {
       // send user data, with id
-      const newInfo = {};
-      newInfo.name = this.contact.name;
-      newInfo.phone_number = this.contact.phone_number;
-      newInfo.owner = this.contact.owner;
-      newInfo.photo = this.contact.photo;
-      const id = this.contact.id;
-      this.$store
-        .dispatch("editContact", { user: newInfo, id: id })
-        .then(resolve => {
-          console.log("USER EDITED");
-          console.log(resolve);
-          this.$router.push("/user/contacts");
-        })
-        .catch(error => {
-          console.log("User not edited");
-          console.log(error);
-        });
-    }
-  }
+      console.log('Edited contact data');
+      console.log(this.contact);
+      console.log('end of edited data');
+    },
+  },
 };
 </script>

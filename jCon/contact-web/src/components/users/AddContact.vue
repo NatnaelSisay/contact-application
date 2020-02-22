@@ -5,6 +5,22 @@
         Add Contact
       </v-card-title>
 
+      <!-- avatar -->
+      <v-layout class="d-flex justify-center">
+        <div>
+          <input
+            type="file"
+            style="display : none"
+            ref="fileInput"
+            @change="avatarSelected"
+          />
+          <v-avatar @click="$refs.fileInput.click()" size="150">
+            <img :src="avatar" :alt="contact.name" class="img" />
+          </v-avatar>
+        </div>
+      </v-layout>
+      <!-- end of avatar -->
+
       <v-card-text>
         <v-form action="#" @submit.prevent="newContact">
           <v-row>
@@ -41,39 +57,37 @@
 </template>
 <script>
 export default {
-  name: "login",
+  name: 'login',
   data() {
     return {
       contact: {
         name: null,
         phone: null,
         owner: null,
-        photo: null
-      }
+        photo: 'avatar',
+      },
+      avatar: null,
     };
   },
+  created() {
+    this.avatar = require('@/assets/avatar.png');
+  },
   methods: {
-    newContact() {
-      alert("contact");
-      const user = {};
-      user.name = this.contact.name;
-      user.phone_number = this.contact.phone;
-      user.photo = "";
-      user.owner = "natyjava8@gmail.com";
-      console.log(user);
-
-      // when i try to send the data, it say it is not valid.
-      // when i print out it says it is observer, to i changed it
-      this.$store
-        .dispatch("addContact", user)
-        .then(() => {
-          this.$router.go();
-        })
-        .catch(error => {
-          // LOGIN filed
-          console.log(error);
-        });
-    }
-  }
+    newContact() {},
+    avatarSelected(event) {
+      // FIX ISSUE
+      const selectedFile = event.target.files[0];
+      this.avatar = URL.createObjectURL(selectedFile);
+      this.contact.photo = selectedFile;
+      console.log(selectedFile);
+    },
+  },
 };
 </script>
+<style scoped>
+.img {
+  /* padding: 1em; */
+  border: 5px solid lightgreen;
+  border-radius: 50%;
+}
+</style>

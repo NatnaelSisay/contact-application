@@ -165,61 +165,61 @@
 <script>
 // *********** FORM VALIDATION **********
 
-import { required, email } from "vee-validate/dist/rules";
+import { required, email } from 'vee-validate/dist/rules';
 import {
   extend,
   setInteractionMode,
   ValidationObserver,
-  ValidationProvider
-} from "vee-validate";
+  ValidationProvider,
+} from 'vee-validate';
 // setInteractionMode,
 // RULES
-setInteractionMode("eager");
-extend("minStringLength", value => {
+setInteractionMode('eager');
+extend('minStringLength', value => {
   if (value.length < 4) {
-    return "Name Shoud be Atlear 4 character long";
+    return 'Name Shoud be Atlear 4 character long';
   }
   return true;
 });
-extend("required", {
+extend('required', {
   ...required,
-  message: "* Required"
+  message: '* Required',
 });
-extend("email", {
+extend('email', {
   ...email,
-  message: "* Email is not Valid"
+  message: '* Email is not Valid',
 });
-extend("ValidPhoneNumber", value => {
+extend('ValidPhoneNumber', value => {
   const tenCharacter = value.length == 10;
-  const start_with_09 = value.slice(0, 2) == "09";
+  const start_with_09 = value.slice(0, 2) == '09';
   if (tenCharacter && start_with_09) {
     return true;
   }
-  return "* Not Valid Phone Number (eg, 0934343434)";
+  return '* Not Valid Phone Number (eg, 0934343434)';
 });
 
-extend("Password", value => {
+extend('Password', value => {
   if (value.length > 4) {
     return true;
   }
-  return "* Password Need to be at leart 4 character long";
+  return '* Password Need to be at leart 4 character long';
 });
-extend("confirm", {
-  params: ["target"],
+extend('confirm', {
+  params: ['target'],
   validate(value, { target }) {
     return value === target;
   },
-  message: "Password confirmation does not match"
+  message: 'Password confirmation does not match',
 });
 
 // ******* end of form validation extends ********
 
 // import axios from "axios";
 export default {
-  name: "signup",
+  name: 'signup',
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
   },
   data() {
     return {
@@ -229,14 +229,14 @@ export default {
         phone_number: null,
         password: null,
         confirm: null,
-        photo: null
+        photo: null,
       },
       errors: [],
-      avatar: "@/assets/logo.svg"
+      avatar: '@/assets/logo.svg',
     };
   },
   created() {
-    this.avatar = require("@/assets/avatar.png");
+    this.avatar = require('@/assets/avatar.png');
   },
   methods: {
     signup() {
@@ -249,28 +249,28 @@ export default {
             const theUser = {
               name: this.user.name,
               phone_number: this.user.phone_number,
-              photo: "avatar",
-              realm: "novalue",
+              photo: 'avatar',
+              realm: 'novalue',
               username: this.user.name,
               email: this.user.email,
               emailVerified: true,
-              password: this.user.password
+              password: this.user.password,
             };
 
             this.$store
-              .dispatch("register", {
+              .dispatch('register', {
                 user: theUser,
-                image: this.user.photo
+                image: this.user.photo,
               })
               .then(() => {
-                this.$router.push("/login");
+                this.$router.push('/login');
               })
               .catch(error => {
                 // SIGNUP FAILED
                 console.log(error);
               });
           } else {
-            console.log("Form validation falied");
+            console.log('Form validation falied');
           }
         })
         .catch(err => {
@@ -288,8 +288,8 @@ export default {
       this.avatar = URL.createObjectURL(selectedFile);
       this.user.photo = selectedFile;
       console.log(selectedFile);
-    }
-  }
+    },
+  },
 };
 </script>
 
