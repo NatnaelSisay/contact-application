@@ -73,13 +73,47 @@ export default {
     this.avatar = require('@/assets/avatar.png');
   },
   methods: {
-    newContact() {},
+    newContact() {
+      /**
+       * newContact :-> will add a contact to the database
+       *
+       * retrun :-> nothing, but will redirect to contact list based on success
+       *
+       */
+
+      // ****** DATA CLEANING ****
+
+      const contactInfo = {};
+      contactInfo.name = this.contact.name;
+      contactInfo.phone_number = this.contact.phone;
+      contactInfo.ownerId = this.$store.getters.getOwnerId;
+      contactInfo.photo = this.contact.photo;
+
+      this.$store
+        .dispatch('addContact', contactInfo)
+        .then(() => {
+          //  *************[ SUCCESS ] NOTIFICATION NEW USER IS SUCCESFYLLY ADDED *******
+
+          this.$router.push('/user/contacts');
+
+          //  ************* NOTIFICATION NEW USER IS SUCCESFYLLY ADDED *******
+        })
+        .catch(() => {
+          //  *************[ ERROR ] NOTIFICATION NEW USER WAS NOT ADDED *******
+          //  *************[ ERROR ] NOTIFICATION NEW USER WAS NOT ADDED *******
+        });
+    },
     avatarSelected(event) {
-      // FIX ISSUE
+      /**
+       * avatarSelected :-> will give us the selected avatar and assign for preview
+       *
+       * return :-> no return value
+       * modifies, this.avatar , this.contact.photo datas
+       */
       const selectedFile = event.target.files[0];
       this.avatar = URL.createObjectURL(selectedFile);
       this.contact.photo = selectedFile;
-      console.log(selectedFile);
+      // console.log(selectedFile);
     },
   },
 };

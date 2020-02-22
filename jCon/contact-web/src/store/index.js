@@ -22,7 +22,7 @@ const getters = {
   getContacts: state => state.contacts,
   getDetail: state => state.contactDetail,
   getProfilePicture: state => state.logged_user.photo,
-  getOwerId: state => state.logged_user.id,
+  getOwnerId: state => state.logged_user.id,
 };
 
 const mutations = {
@@ -69,13 +69,13 @@ const actions = {
       container +
       '/download/' +
       name;
-    console.log('The image url : -> ' + url);
+
     return url;
   },
   uploadImage(context, upload) {
     /**
 		UPLOAD IMAGE TO DESIRED LOCATION
-		return :-> Promise
+		return :-> Promise containing uploaded image information
 
     payload should contain where to upload, and the image data
     upload.url :-> url to upload the image
@@ -87,6 +87,7 @@ const actions = {
     userImage.append('profile', upload.imageFile, upload.imageFile.name);
     return axios.post(upload.url, userImage);
   },
+
   addOwner(context, ownerInfo) {
     /**
      * Will Add owner to database with Profile picture or not
@@ -176,6 +177,7 @@ const actions = {
       }
     });
   },
+
   login(context, payload) {
     // console.log(payload);
     return new Promise((resolve, reject) => {
@@ -213,26 +215,80 @@ const actions = {
     });
   },
 
-  addContact({ state }, payload) {
-    payload.ownerId = '5e51088409d899440cf7ec55';
-    return new Promise((resolve, reject) => {
-      axios
-        .post(
-          'http://localhost:3000/api/contacts?access_token=' +
-            state.access_token,
-          payload
-        )
-        .then(result => {
-          console.log(result);
-          // context.commit("CONTACT_ADDED");
-          resolve();
-        })
-        .catch(error => {
-          console.log(error);
-          reject();
-        });
+  addNewContact(context, contactInfo) {
+    /**
+     * addNewContact :-> add a [ cleaned ] contact information to the database
+     * mainly requested by 'addContact' action
+     */
+
+    return axios.post('http://localhost:3000/api/contacts', contactInfo, {
+      params: {
+        access_token: context.getters.getToken,
+      },
     });
   },
+  addContact(context, contact) {
+    /**
+     * addContact :-> will add a new contact to the databse, with its repsective owner
+     *
+     * payload :-> { name, phone_number, photo }
+     */
+
+    // const url = 'http://localhost:3000/api/contacts?access_token=';
+    // payload.ownerId = '5e51088409d899440cf7ec55';
+
+    return new Promise((resolve, reject) => {
+      if (contact.photo != 'avatar') {
+        // USER HAVE SELECTED A PROFILE PICTURE
+        context
+          .dispatch('uploadImage', {
+            url: 'http://localhost:3000/api/ContactPictures/profiles/upload',
+            imageFile: contact.photo,
+          })
+          .then(uploadedImage => {
+            // ****** [ SUCCESS ] IMAGE UPLOADED ****
+
+            context
+              .dispatch('construcImageUrl', uploadedImage)
+              .then(imageUrl => {
+                // ***** IMAGE URL FOUND *****
+
+                contact.photo = imageUrl; // the image location
+
+                context.dispatch('addNewContact', contact).then(result => {
+                  // ******* [ SUCCESS ] ADDED CONTACT
+                  resolve(result);
+                });
+              });
+          })
+          .catch(error => {
+            // ******* [ ERROR ] IMAGE UPLOAD FAILED *****
+
+            reject(error);
+
+            // ******* [ ERROR ] IMAGE UPLOAD FAILED *****
+          });
+      } else {
+        context
+          .dispatch('addNewContact', contact)
+          .then(result => {
+            // ******* [ SUCCESS ] ADDED CONTACT ******
+
+            resolve(result);
+
+            // ******* [ SUCCESS ] ADDED CONTACT ******
+          })
+          .catch(error => {
+            // ****** [ ERROR ] DIDN'T ADD CONTACT *****
+
+            reject(error);
+
+            // ****** [ ERROR ] DIDN'T ADD CONTACT *****
+          });
+      }
+    });
+  },
+
   getContactList(context) {
     /**
      * getContactList :-> fetch the contact list that belong to the logged in user
@@ -249,7 +305,7 @@ const actions = {
       axios
         .get(url, {
           params: {
-            'filter[where][ownerId]': context.getters.getOwerId,
+            'filter[where][ownerId]': context.getters.getOwnerId,
             access_token: context.getters.getToken,
           },
         })
