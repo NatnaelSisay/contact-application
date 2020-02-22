@@ -27,9 +27,9 @@
         </v-list-item>
         <!-- end of v-list-item -->
 
-        <v-list-item link to="/user/editProfile">
+        <!-- <v-list-item link to="/user/editProfile">
           <v-list-item-title>Edir Profile</v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
         <!-- end fo v-list-item -->
       </v-list>
       <!-- end of v-list, v-if logged in -->
