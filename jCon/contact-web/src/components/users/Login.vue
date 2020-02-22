@@ -60,7 +60,7 @@ export default {
           // ***** [ SUCCESS ] LOGGED IN SUCCESSFULLY *****
           this.$router.push('/');
         })
-        .catch(error => {
+        .catch(() => {
           // **** [ ERROR ] NOTIFICATION EMAIL OR PASSWORD MAY BE WRONG ***
           // console.log(error);
         });
