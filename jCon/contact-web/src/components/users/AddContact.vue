@@ -136,9 +136,9 @@ export default {
       const isFormValidated = this.$refs.observer.validate();
 
       isFormValidated
-        .then(resolve => {
+        .then(isFormValid => {
           // ****** FORM VALIDATED *****
-          if (resolve) {
+          if (isFormValid) {
             // ****** DATA CLEANING ****
             const contactInfo = {};
             contactInfo.name = this.contact.name;

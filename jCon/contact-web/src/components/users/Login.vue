@@ -6,35 +6,48 @@
       </v-card-title>
 
       <v-card-text>
-        <v-form action="#" @submit.prevent="login">
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                label="Email"
-                type="email"
-                outlined
-                v-model="user.email"
-              >
-              </v-text-field>
-              <!-- end of v-text-field for phone number -->
-              <v-text-field
-                label="Password"
-                type="password"
-                v-model="user.password"
-                outlined
-              >
-              </v-text-field>
-              <!-- end of v-text-field for password -->
+        <ValidationObserver ref="observer">
+          <v-form action="#" @submit.prevent="login">
+            <v-row>
+              <v-col cols="12">
+                <ValidationProvider rules="required|email" v-slot="{ errors }">
+                  <v-text-field
+                    label="Email"
+                    type="email"
+                    outlined
+                    v-model="user.email"
+                    :error-messages="errors"
+                  >
+                  </v-text-field>
+                </ValidationProvider>
+                <!-- end of v-text-field for phone number -->
 
-              <v-btn x-large type="submit" color="success" value="Sign up"
-                >Login</v-btn
-              >
-            </v-col>
-            <!-- end of v-col -->
-          </v-row>
-          <!-- end of v-row -->
-        </v-form>
-        <!-- end of v-form -->
+                <ValidationProvider
+                  rules="required|Password"
+                  v-slot="{ errors }"
+                  name="password"
+                >
+                  <v-text-field
+                    label="Password"
+                    type="password"
+                    v-model="user.password"
+                    :error-messages="errors"
+                    outlined
+                  >
+                  </v-text-field>
+                </ValidationProvider>
+                <!-- end of v-text-field for password -->
+
+                <v-btn x-large type="submit" color="success" value="Sign up"
+                  >Login</v-btn
+                >
+              </v-col>
+              <!-- end of v-col -->
+            </v-row>
+            <!-- end of v-row -->
+          </v-form>
+          <!-- end of v-form -->
+        </ValidationObserver>
       </v-card-text>
       <!-- end of v-card-text -->
     </v-card>
@@ -42,8 +55,43 @@
   </v-container>
 </template>
 <script>
+// *********** FORM VALIDATION **********
+
+import { required, email } from 'vee-validate/dist/rules';
+import {
+  extend,
+  setInteractionMode,
+  ValidationObserver,
+  ValidationProvider,
+} from 'vee-validate';
+// setInteractionMode,
+// RULES
+setInteractionMode('eager');
+
+extend('required', {
+  ...required,
+  message: '* Required',
+});
+extend('email', {
+  ...email,
+  message: '* Email is not Valid',
+});
+
+extend('Password', value => {
+  if (value.length > 4) {
+    return true;
+  }
+  return '* Password error';
+});
+
+// ******* end of form validation extends ********
+
 export default {
   name: 'login',
+  components: {
+    ValidationProvider,
+    ValidationObserver,
+  },
   data() {
     return {
       user: {
@@ -54,16 +102,22 @@ export default {
   },
   methods: {
     login() {
-      this.$store
-        .dispatch('login', this.user)
-        .then(() => {
-          // ***** [ SUCCESS ] LOGGED IN SUCCESSFULLY *****
-          this.$router.push('/');
-        })
-        .catch(() => {
-          // **** [ ERROR ] NOTIFICATION EMAIL OR PASSWORD MAY BE WRONG ***
-          // console.log(error);
-        });
+      const isFormValidated = this.$refs.observer.validate();
+
+      isFormValidated.then(isFormValid => {
+        if (isFormValid) {
+          this.$store
+            .dispatch('login', this.user)
+            .then(() => {
+              // ***** [ SUCCESS ] LOGGED IN SUCCESSFULLY *****
+              this.$router.push('/');
+            })
+            .catch(() => {
+              // **** [ ERROR ] NOTIFICATION EMAIL OR PASSWORD MAY BE WRONG ***
+              // console.log(error);
+            });
+        }
+      });
     },
   },
 };
