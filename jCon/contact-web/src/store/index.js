@@ -13,6 +13,7 @@ const state = {
   contacts: [],
   contactDetail: {},
   profilePicture: null,
+  snackBar: { show: false, color: 'success' },
 };
 const getters = {
   isLoggedIn: state => !!state.access_token,
@@ -23,6 +24,7 @@ const getters = {
   getDetail: state => state.contactDetail,
   getProfilePicture: state => state.logged_user.photo,
   getOwnerId: state => state.logged_user.id,
+  getSnackBar: state => state.snackBar,
 };
 
 const mutations = {
@@ -53,6 +55,11 @@ const mutations = {
   SET_PROFILE_PICTURE(state, picture) {
     console.log(picture);
     state.logged_user.photo = picture;
+  },
+  SET_SNACK_BAR(state, snackbar) {
+    snackbar.show = true;
+    snackbar.color = snackbar.color || 'success';
+    state.snackBar = snackbar;
   },
 };
 
@@ -142,12 +149,29 @@ const actions = {
                   })
                   .then(registeredUser => {
                     // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
+
+                    // ******** SHOW SNACK BAR *******
+                    const snackbar = {
+                      text: 'Successfully Registerd ',
+                    };
+                    context.commit('SET_SNACK_BAR', snackbar);
+                    // ******** SHOW SNACK BAR *******
+
                     res(registeredUser);
                     // ******* NOTIFICATION [ USER REGISTERED SUCCESSFULLY ] ****
                   })
                   .catch(() => {
                     // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
                     rej();
+
+                    // ******** SHOW SNACK BAR *******
+                    const snackbar = {
+                      text: 'User Already Exist Please change *email or *name ',
+                      color: 'error',
+                    };
+                    context.commit('SET_SNACK_BAR', snackbar);
+                    // ******** SHOW SNACK BAR *******
+
                     // ******* NOTIFICATION [ USER ALREADY EXIST ] ****
                   });
               });
@@ -180,7 +204,7 @@ const actions = {
 
   login(context, loginInfo) {
     const url = 'http://localhost:3000/api/Owners/login?include=User';
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       axios
         .post(url, loginInfo)
         .then(result => {
@@ -193,17 +217,32 @@ const actions = {
           context.commit('AUTH_SUCCESS', access_token);
           context.commit('AUTH_USER', result.data.user);
 
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: 'Welcome ' + result.data.user.name,
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+          // ******** SHOW SNACK BAR *******
           resolve(result);
         })
-        .catch(err => {
+        .catch(() => {
           // ******** [ ERRROR ] USER NOT FOUND *********
           // clean our the localstorage
           context.commit('AUTH_ERROR');
           localStorage.removeItem('access_token');
           localStorage.removeItem('vuex');
-          reject(err);
-          console.log('Error');
-          console.log(err);
+
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: '* Incorect email or password ',
+            color: 'error',
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+          // ******** SHOW SNACK BAR *******
+
+          // reject(err);
+          // console.log('Error');
+          // console.log(err);
         });
     });
   },
@@ -259,6 +298,14 @@ const actions = {
 
                 context.dispatch('addNewContact', contact).then(result => {
                   // ******* [ SUCCESS ] ADDED CONTACT
+
+                  // ******** SHOW SNACK BAR *******
+                  const snackbar = {
+                    text: 'You Added [ ' + result.data.name + ' ]',
+                  };
+                  context.commit('SET_SNACK_BAR', snackbar);
+                  // ******** SHOW SNACK BAR *******
+
                   resolve(result);
                 });
               });
@@ -267,6 +314,13 @@ const actions = {
             // ******* [ ERROR ] IMAGE UPLOAD FAILED *****
 
             reject(error);
+            // ******** SHOW SNACK BAR *******
+            const snackbar = {
+              text: 'Failed to Add Contact ',
+              color: 'error',
+            };
+            context.commit('SET_SNACK_BAR', snackbar);
+            // ******** SHOW SNACK BAR *******
 
             // ******* [ ERROR ] IMAGE UPLOAD FAILED *****
           });
@@ -277,6 +331,13 @@ const actions = {
             // ******* [ SUCCESS ] ADDED CONTACT ******
 
             resolve(result);
+
+            // ******** SHOW SNACK BAR *******
+            const snackbar = {
+              text: 'You Added [ ' + result.data.name + ' ]',
+            };
+            context.commit('SET_SNACK_BAR', snackbar);
+            // ******** SHOW SNACK BAR *******
 
             // ******* [ SUCCESS ] ADDED CONTACT ******
           })
@@ -376,11 +437,24 @@ const actions = {
         })
         .then(result => {
           // **** [ SUCCESS ] CONTACT WAS UPDATED *****
+
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: 'Contact Updated ',
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+          // ******** SHOW SNACK BAR *******
           resolve(result);
         })
         .catch(error => {
           // **** [ ERROR ] CONTACT WAS NOT UPDATED ****
-          console.log('Cant update contact');
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: 'Error Updating Contact',
+            color: 'error',
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+          // ******** SHOW SNACK BAR *******
           reject(error);
         });
     });
@@ -445,11 +519,26 @@ const actions = {
 
           resolve(result);
 
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: 'Contact Deleted ',
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+          // ******** SHOW SNACK BAR *******
           // *****[ SUCCESS ] DELETED CONTACT *****
         })
         .catch(error => {
           // *****[ ERROR ] NO CONTACT DELETED *****
           reject(error);
+
+          // ******** SHOW SNACK BAR *******
+          const snackbar = {
+            text: 'Error Deleting Contact',
+            color: 'error',
+          };
+          context.commit('SET_SNACK_BAR', snackbar);
+
+          // ******** SHOW SNACK BAR *******
           // *****[ ERROR ] NO CONTACT DELETED *****
         });
     });
