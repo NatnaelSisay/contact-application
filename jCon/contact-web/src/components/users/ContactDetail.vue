@@ -167,6 +167,7 @@ export default {
       contact: {},
       avatar: null,
       currentProfile: '',
+      fetchedProfle: '',
       editable: false,
     };
   },
@@ -178,6 +179,7 @@ export default {
     this.$store
       .dispatch('getContactById', this.$router.history.current.params.id)
       .then(contactInfo => {
+        this.fetchedProfle = contactInfo.photo;
         this.contact = contactInfo;
         this.currentProfile = this.contact.photo;
       })
@@ -217,8 +219,12 @@ export default {
             // ********** user haven't changed the picture. ******
             // console.log('client');
             // console.log(this.contact);
+
             this.$store
-              .dispatch('normalEditContact', contactInfo)
+              .dispatch('normalEditContact', {
+                contactInfo: contactInfo,
+                previousProflie: 'avatar',
+              })
               .then(() => {
                 // ********** [ SUCCESS ] NOTIFICATION CONTACT HAS BEEN UPDATED *******
 
@@ -231,8 +237,12 @@ export default {
                 // ********* [ ERROR ] NOTIFICATION CONTACT CAN'T BE UPDATED **********
               });
           } else {
+            const contact = {
+              contactInfo: contactInfo,
+              previousProfile: this.fetchedProfle,
+            };
             this.$store
-              .dispatch('profileChangedContact', contactInfo)
+              .dispatch('profileChangedContact', contact)
               .then(() => {
                 // ******* [ SUCCESS ] NOTIFICAITON CONTACT MODIFIED ******
 

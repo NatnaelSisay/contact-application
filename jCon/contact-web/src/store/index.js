@@ -53,7 +53,6 @@ const mutations = {
     state.contactDetail = detail;
   },
   SET_PROFILE_PICTURE(state, picture) {
-    console.log(picture);
     state.logged_user.photo = picture;
   },
   SET_SNACK_BAR(state, snackbar) {
@@ -94,6 +93,15 @@ const actions = {
     userImage.append('profile', upload.imageFile, upload.imageFile.name);
     return axios.post(upload.url, userImage);
   },
+  deleteImage(context, url) {
+    /**
+     * deleteImage :-> delete image from database
+     *
+     * mainly change the /downnload/ to /files/ and send a delete request
+     */
+    const deleteUrl = url.replace('download', 'files');
+    return axios.delete(deleteUrl);
+  },
 
   addOwner(context, ownerInfo) {
     /**
@@ -133,15 +141,11 @@ const actions = {
             imageFile: payload.image,
           })
           .then(uploadedImage => {
-            // console.log('image uploaded');
-            // console.log(resolve);
-
             // CLEAN OUT THE URL OF IMAGE FOR USER
             context
               .dispatch('construcImageUrl', uploadedImage)
               .then(imageUrl => {
                 // REGISTER THE USER
-                console.log('The Image Url ' + imageUrl);
                 context
                   .dispatch('addOwner', {
                     user: payload.user,
@@ -179,7 +183,6 @@ const actions = {
           .catch(() => {
             // ******* NOTIFICATION [ IMAGE NOT UPLOADED ] ****
             // SERVER DOWN , TRY AGAIN LETTER
-            console.log('image was not uploaded');
             // ******* NOTIFICATION [ IMAGE NOT UPLOADED ] ****
           });
       } else {
@@ -241,8 +244,6 @@ const actions = {
           // ******** SHOW SNACK BAR *******
 
           // reject(err);
-          // console.log('Error');
-          // console.log(err);
         });
     });
   },
@@ -467,24 +468,38 @@ const actions = {
      * contact :-> { name, phone_number , id, ownerId, photo : File }
      * the photo is the selected file
      */
+
     return new Promise((resolve, reject) => {
       // ** UPLOAD PICTURE **
 
+      // If the image before update is not avatar , delete the image from database
+      if (contact.previousProfile != 'avatar') {
+        context
+          .dispatch('deleteImage', contact.previousProfile)
+          .then(() => {
+            // ***** IMAGE DELETED ****
+          })
+          .catch(() => {
+            // ***** [ERROR] IMAGE NOT DELETED
+          });
+      }
+
+      // UPLOAD A NEW PICTURE
       context
         .dispatch('uploadImage', {
           url: 'http://localhost:3000/api/ContactPictures/profiles/upload',
-          imageFile: contact.photo,
+          imageFile: contact.contactInfo.photo,
         })
         .then(uploadedImage => {
           // *** GENERATE IMAGE URL **
           context
             .dispatch('construcImageUrl', uploadedImage)
             .then(imageUrl => {
-              contact.photo = imageUrl;
+              contact.contactInfo.photo = imageUrl;
 
               // *** EDIT CONTACT WITH THE NEW IMAGE ***
               context
-                .dispatch('normalEditContact', contact)
+                .dispatch('normalEditContact', contact.contactInfo)
                 .then(updatedContact => {
                   // ***** [ SUCCESS ] UPDATED PROFILE **
 
