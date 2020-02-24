@@ -255,7 +255,6 @@ const actions = {
           context.getters.getToken
         )
         .then(result => {
-          console.log('Logging out was success full');
           context.commit('LOGOUT');
           localStorage.removeItem('access_token');
           localStorage.removeItem('vuex');
@@ -264,7 +263,6 @@ const actions = {
         })
         .catch(() => {
           // ***** ERROR LOGGINT OUT *****
-          console.log('[ ERROR ] Logging out was FAILED');
         });
     });
   },
