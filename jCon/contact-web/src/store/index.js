@@ -527,6 +527,13 @@ const actions = {
   deleteContact(context, contactId) {
     return new Promise((resolve, reject) => {
       const url = 'http://localhost:3000/api/contacts/' + contactId;
+      // *** REMOVE CONTACT IMAGE
+      axios.get(url).then(user => {
+        // ***** CONTACT IMAGE REMOVED *****
+        context.dispatch('deleteImage', user.data.photo);
+        // ***** CONTACT IMAGE REMOVED *****
+      });
+
       axios
         .delete(url)
         .then(result => {
