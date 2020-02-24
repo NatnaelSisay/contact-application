@@ -28,7 +28,7 @@
               <v-col cols="12">
                 <ValidationProvider
                   name="name"
-                  rules="required|alpha_dash"
+                  rules="required"
                   v-slot="{ errors }"
                 >
                   <v-text-field
