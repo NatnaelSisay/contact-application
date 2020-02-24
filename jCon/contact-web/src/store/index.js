@@ -249,11 +249,23 @@ const actions = {
   },
   logout(context) {
     return new Promise(resolve => {
-      context.commit('LOGOUT');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('vuex');
-      delete axios.defaults.headers.common['Authentication'];
-      resolve();
+      axios
+        .post(
+          'http://localhost:3000/api/Owners/logout',
+          context.getters.getToken
+        )
+        .then(result => {
+          console.log('Logging out was success full');
+          context.commit('LOGOUT');
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('vuex');
+          delete axios.defaults.headers.common['Authentication'];
+          resolve(result);
+        })
+        .catch(() => {
+          // ***** ERROR LOGGINT OUT *****
+          console.log('[ ERROR ] Logging out was FAILED');
+        });
     });
   },
 
